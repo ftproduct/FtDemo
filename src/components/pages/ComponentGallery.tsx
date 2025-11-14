@@ -1,9 +1,6 @@
 import { useState } from 'react';
 import '../../styles/globals.css';
-import { Badge, Table, ProgressBar, Tabs, Checkbox, RadioGroup, Switch } from 'ft-design-system/ai';
-import { FTInput } from '../FTInput';
-import { FTButton, FTButtonWithIcon, FTButtonWithPlus } from '../FTButton';
-import { FTTab, FTTabs } from '../FTTab';
+import { Badge, Table, ProgressBar, Tabs, Checkbox, RadioGroup, Switch, Button, Input } from 'ft-design-system/ai';
 import { Clock } from 'lucide-react';
 
 interface ComponentCardProps {
@@ -50,16 +47,16 @@ function ComponentCard({ name, description, demo, code }: ComponentCardProps) {
         >
           {demo}
         </div>
-        <FTButton 
+        <Button 
           variant="secondary"
           onClick={() => setShowCode(!showCode)}
-          className="w-full border-[var(--border-primary)] rounded-lg"
+          className="w-full"
           style={{
             width: '100%'
           }}
         >
           {showCode ? 'Hide Code' : 'Show Code'}
-        </FTButton>
+        </Button>
         {showCode && (
           <pre 
             className="overflow-x-auto"
@@ -287,100 +284,92 @@ export default function ComponentGallery() {
           <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-2)' }}>
             <p style={{ fontSize: 'var(--font-size-sm)', color: 'var(--secondary)', fontWeight: 'var(--font-weight-medium)' }}>Filled Variants</p>
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: 'var(--space-2)' }}>
-              <FTButton variant="primary">Primary</FTButton>
-              <FTButton variant="secondary">Secondary</FTButton>
-              <FTButton variant="destructive">Destructive</FTButton>
+              <Button variant="primary">Primary</Button>
+              <Button variant="secondary">Secondary</Button>
+              <Button variant="destructive">Destructive</Button>
             </div>
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-2)' }}>
             <p style={{ fontSize: 'var(--font-size-sm)', color: 'var(--secondary)', fontWeight: 'var(--font-weight-medium)' }}>Text & Link Variants</p>
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: 'var(--space-4)', alignItems: 'center' }}>
-              <FTButtonWithPlus variant="text">Button</FTButtonWithPlus>
-              <FTButtonWithPlus variant="link">Button</FTButtonWithPlus>
+              <Button variant="text" icon="add">Button</Button>
+              <Button variant="link" icon="add">Button</Button>
             </div>
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-2)' }}>
             <p style={{ fontSize: 'var(--font-size-sm)', color: 'var(--secondary)', fontWeight: 'var(--font-weight-medium)' }}>With Icons</p>
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: 'var(--space-2)' }}>
-              <FTButtonWithIcon variant="primary">With Icon</FTButtonWithIcon>
-              <FTButtonWithIcon variant="secondary">Secondary Icon</FTButtonWithIcon>
-              <FTButtonWithIcon variant="destructive">Delete</FTButtonWithIcon>
+              <Button variant="primary" icon="check">With Icon</Button>
+              <Button variant="secondary" icon="check">Secondary Icon</Button>
+              <Button variant="destructive" icon="delete">Delete</Button>
             </div>
           </div>
         </div>
       ),
       code: `{/* Filled Variants */}
-<FTButton variant="primary">Primary</FTButton>
-<FTButton variant="secondary">Secondary</FTButton>
-<FTButton variant="destructive">Destructive</FTButton>
+<Button variant="primary">Primary</Button>
+<Button variant="secondary">Secondary</Button>
+<Button variant="destructive">Destructive</Button>
 
 {/* Text & Link Variants (no background) */}
-<FTButtonWithPlus variant="text">Button</FTButtonWithPlus>
-<FTButtonWithPlus variant="link">Button</FTButtonWithPlus>
+<Button variant="text" icon="add">Button</Button>
+<Button variant="link" icon="add">Button</Button>
 
 {/* With Icons */}
-<FTButtonWithIcon variant="primary">With Icon</FTButtonWithIcon>
-<FTButtonWithIcon variant="secondary">Secondary Icon</FTButtonWithIcon>`
+<Button variant="primary" icon="check">With Icon</Button>
+<Button variant="secondary" icon="check">Secondary Icon</Button>`
     },
     {
       name: 'Input',
       description: 'Text input field with label, prefix, suffix, and clear button',
       demo: (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-6)', width: '100%', maxWidth: '400px' }}>
-          <FTInput 
+          <Input 
             label="Label"
             placeholder="Value"
-            prefix="₹"
-            suffix="kgs"
-            showClear
+            leadingIcon="rupee-coin"
           />
-          <FTInput 
+          <Input 
             label="Amount"
             placeholder="Enter amount"
-            prefix="$"
-            showClear
+            leadingIcon="rupee-coin"
           />
-          <FTInput 
+          <Input 
             label="Email"
             type="email"
             placeholder="Enter your email"
-            showClear
+            leadingIcon="mail"
           />
-          <FTInput 
+          <Input 
             label="Disabled"
             placeholder="Disabled input"
             disabled
           />
-          <FTInput 
+          <Input 
             label="With Error"
             placeholder="Invalid value"
-            error
+            error="This field is required"
             helperText="This field is required"
-            showClear
           />
         </div>
       ),
-      code: `<FTInput 
+      code: `<Input 
   label="Label"
   placeholder="Value"
-  prefix="₹"
-  suffix="kgs"
-  showClear
+  leadingIcon="rupee-coin"
 />
 
-<FTInput 
+<Input 
   label="Amount"
   placeholder="Enter amount"
-  prefix="$"
-  showClear
+  leadingIcon="rupee-coin"
 />
 
-<FTInput 
+<Input 
   label="With Error"
   placeholder="Invalid value"
-  error
+  error="This field is required"
   helperText="This field is required"
-  showClear
 />`
     },
     {
@@ -427,22 +416,29 @@ const data = [
     },
     {
       name: 'Tabs (FT Design System)',
-      description: 'Custom tab component matching Figma design with badges and icons',
+      description: 'Tab component from FT Design System with badges and icons',
       demo: (
         <div style={{ width: '100%' }}>
-          <FTTabs>
-            <FTTab label="Planned" icon={<Clock size={16} />} badge={56} active />
-            <FTTab label="In Transit" icon={<Clock size={16} />} badge={24} />
-            <FTTab label="Delivered" icon={<Clock size={16} />} badge={128} />
-            <FTTab label="Completed" />
-          </FTTabs>
+          <Tabs 
+            tabs={[
+              { label: 'Planned', badge: true, badgeCount: 56, icon: true },
+              { label: 'In Transit', badge: true, badgeCount: 24, icon: true },
+              { label: 'Delivered', badge: true, badgeCount: 128, icon: true },
+              { label: 'Completed' }
+            ]}
+            activeTab={0}
+            className="bg-[var(--bg-primary)]"
+          />
         </div>
       ),
-      code: `<FTTabs>
-  <FTTab label="Planned" icon={<Clock size={16} />} badge={56} active />
-  <FTTab label="In Transit" icon={<Clock size={16} />} badge={24} />
-  <FTTab label="Delivered" icon={<Clock size={16} />} badge={128} />
-</FTTabs>`
+      code: `<Tabs 
+  tabs={[
+    { label: 'Planned', badge: true, badgeCount: 56, icon: true },
+    { label: 'In Transit', badge: true, badgeCount: 24, icon: true },
+    { label: 'Delivered', badge: true, badgeCount: 128, icon: true }
+  ]}
+  activeTab={0}
+/>`
     },
     {
       name: 'Tabs (ft-design-system)',
@@ -470,8 +466,8 @@ const data = [
         <div style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: 'var(--space-4)' }}>
           <ProgressBar value={progressValue} />
           <div style={{ display: 'flex', gap: 'var(--space-2)' }}>
-            <FTButton variant="secondary" onClick={() => setProgressValue(Math.max(0, progressValue - 10))}>-10%</FTButton>
-            <FTButton variant="secondary" onClick={() => setProgressValue(Math.min(100, progressValue + 10))}>+10%</FTButton>
+            <Button variant="secondary" onClick={() => setProgressValue(Math.max(0, progressValue - 10))}>-10%</Button>
+            <Button variant="secondary" onClick={() => setProgressValue(Math.min(100, progressValue + 10))}>+10%</Button>
           </div>
         </div>
       ),
