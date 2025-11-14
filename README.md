@@ -1,7 +1,7 @@
 
-  # Untitled
+  # FT Demo
 
-  This is a code bundle for Untitled. The original project is available at https://www.figma.com/design/pzsigTm6aXoPSezxwE9dbz/Untitled.
+  This is a code bundle for FT Demo. The original project is available at https://www.figma.com/design/pzsigTm6aXoPSezxwE9dbz/FT-Demo.
 
   ## Running the code
 
