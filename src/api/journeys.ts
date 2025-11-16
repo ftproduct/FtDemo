@@ -11,9 +11,9 @@ export interface Journey {
   sla_status: 'on_time' | 'delayed';
   delay_hours?: number;
   sla_status_display: string;
-  alert_type?: string;
+  alert_type?: string | null;
   alert_time?: string;
-  alert_time_display?: string;
+  alert_time_display?: string | null;
   eta_display: string;
   tab_status: string;
   origin_display: string;
@@ -26,6 +26,8 @@ export interface Journey {
   start_time?: string;
   eta?: string;
   actual_arrival?: string;
+  created_at: string;
+  updated_at: string;
 }
 
 export interface JourneysResponse {

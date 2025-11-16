@@ -19,20 +19,25 @@ function Menu() {
   );
 }
 
-function LucideLayoutGrid() {
+function LucideLayoutGrid({ onOpenNavigation }: { onOpenNavigation?: () => void }) {
   return (
-    <div 
-      className="box-border content-stretch flex items-center justify-center overflow-clip relative shrink-0 size-[54px]" 
+    <button
+      type="button"
+      onClick={onOpenNavigation}
+      aria-label="Open navigation"
+      className="box-border content-stretch flex items-center justify-center overflow-clip relative shrink-0 size-[54px]"
       data-name="lucide/layout-grid"
       style={{
         backgroundColor: 'var(--bg-primary)',
         gap: 'var(--space-3)',
         padding: 'var(--space-4)',
-        borderRadius: 'var(--radius-full)'
+        borderRadius: 'var(--radius-full)',
+        border: '1px solid var(--border-primary)',
+        cursor: 'pointer'
       }}
     >
       <Menu />
-    </div>
+    </button>
   );
 }
 
@@ -68,14 +73,14 @@ function CompanyName() {
   );
 }
 
-function Logo() {
+function Logo({ onOpenNavigation }: { onOpenNavigation?: () => void }) {
   return (
     <div 
       className="content-stretch flex items-center relative shrink-0" 
       data-name="Logo"
       style={{ gap: 'var(--space-5)' }}
     >
-      <LucideLayoutGrid />
+      <LucideLayoutGrid onOpenNavigation={onOpenNavigation} />
       <CompanyName />
     </div>
   );
@@ -126,27 +131,27 @@ function CompanyLogos() {
   );
 }
 
-function MaskGroup() {
-  return (
-    <div className="absolute bottom-[-25px] contents left-[-3px] right-[-5.33px] top-0" data-name="Mask group">
-      <div className="absolute bottom-[-25px] left-[-3px] right-[-5.33px] top-0" data-name="User Image">
-        <img alt="User Avatar" className="absolute inset-0 max-w-none object-50%-50% object-cover pointer-events-none size-full" src={imgUserImage} />
-      </div>
-    </div>
-  );
-}
-
 function UserAvatar() {
   return (
     <div 
-      className="overflow-clip relative shrink-0 size-[30px]" 
+      className="overflow-hidden relative shrink-0 size-[30px]" 
       data-name="User Avatar"
       style={{
         backgroundColor: 'var(--bg-primary)',
-        borderRadius: 'var(--radius-full)'
+        borderRadius: 'var(--radius-full)',
+        border: '1px solid var(--border-primary)'
       }}
     >
-      <MaskGroup />
+      <img 
+        alt="User Avatar" 
+        src={imgUserImage} 
+        style={{
+          width: '100%',
+          height: '100%',
+          objectFit: 'cover',
+          borderRadius: 'var(--radius-full)'
+        }}
+      />
     </div>
   );
 }
@@ -194,7 +199,11 @@ function NotificationIcons() {
   );
 }
 
-export default function AppHeader() {
+interface AppHeaderProps {
+  onOpenNavigation?: () => void;
+}
+
+export default function AppHeader({ onOpenNavigation }: AppHeaderProps) {
   return (
     <div 
       className="relative size-full" 
@@ -216,7 +225,7 @@ export default function AppHeader() {
             paddingBottom: 'var(--space-3)'
           }}
         >
-          <Logo />
+          <Logo onOpenNavigation={onOpenNavigation} />
           <NotificationIcons />
         </div>
       </div>

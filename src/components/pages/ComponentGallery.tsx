@@ -1,6 +1,6 @@
-import { useState } from 'react';
-import '../../styles/globals.css';
-import { Badge, Table, ProgressBar, Tabs, Checkbox, RadioGroup, Switch, Button, Input } from 'ft-design-system/ai';
+import React, { useState } from 'react';
+import { Badge, Table, ProgressBar, Tabs, Checkbox, RadioGroup, Switch, Button, Input, Card, Statistic, Text, SubText, DisplayBlock, NavigationMenu, QuickFilters, Dropdown, DatePicker, AppHeader, Footer, UserProfile, Collapsible, UploadZone, FileCard, FileThumbnail, FileTypeIcon, Steps, RadioSelector, SegmentedTabs, Typography, ButtonGroup } from 'ft-design-system/ai';
+import { MissingComponent } from '../MissingComponent';
 import { Clock } from 'lucide-react';
 
 interface ComponentCardProps {
@@ -15,62 +15,67 @@ function ComponentCard({ name, description, demo, code }: ComponentCardProps) {
 
   return (
     <div 
-      className="h-full flex flex-col"
       style={{
-        backgroundColor: 'var(--bg-primary)',
-        border: '1px solid var(--border-primary)',
-        borderRadius: 'var(--radius-md)',
-        overflow: 'hidden'
+        borderBottom: '1px solid var(--border-secondary)',
+        paddingBottom: 'var(--space-8)',
+        marginBottom: 'var(--space-8)'
       }}
     >
-      <div style={{ padding: 'var(--space-6)', gap: 'var(--space-2)', display: 'flex', flexDirection: 'column' }}>
-        <h3 style={{ 
-          fontSize: 'var(--font-size-lg)',
-          fontWeight: 'var(--font-weight-semibold)',
-          color: 'var(--primary)'
-        }}>
-          {name}
-        </h3>
-        <p style={{ fontSize: 'var(--font-size-sm)', color: 'var(--secondary)' }}>
-          {description}
-        </p>
-      </div>
-      <div className="flex-1 flex flex-col" style={{ padding: '0 var(--space-6) var(--space-6)', gap: 'var(--space-4)' }}>
-        <div 
-          className="border rounded-lg min-h-[120px] flex items-center justify-center"
-          style={{ 
-            padding: 'var(--space-4)',
-            borderColor: 'var(--border-primary)',
-            borderRadius: 'var(--radius-md)',
-            backgroundColor: 'var(--bg-primary)'
-          }}
-        >
-          {demo}
-        </div>
-        <Button 
-          variant="secondary"
-          onClick={() => setShowCode(!showCode)}
-          className="w-full"
-          style={{
-            width: '100%'
-          }}
-        >
-          {showCode ? 'Hide Code' : 'Show Code'}
-        </Button>
-        {showCode && (
-          <pre 
-            className="overflow-x-auto"
-            style={{
-              padding: 'var(--space-3)',
-              backgroundColor: 'var(--surface-alt)',
-              borderRadius: 'var(--radius-md)',
-              fontSize: 'var(--font-size-xs)'
-            }}
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-4)', marginBottom: 'var(--space-6)' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <div>
+            <h3 style={{ 
+              fontSize: 'var(--font-size-xl)',
+              fontWeight: 'var(--font-weight-semibold)',
+              color: 'var(--primary)',
+              marginBottom: 'var(--space-2)'
+            }}>
+              {name}
+            </h3>
+            <p style={{ fontSize: 'var(--font-size-md)', color: 'var(--secondary)' }}>
+              {description}
+            </p>
+          </div>
+          <Button 
+            variant="secondary"
+            onClick={() => setShowCode(!showCode)}
           >
-            <code>{code}</code>
-          </pre>
-        )}
+            {showCode ? 'Hide Code' : 'Show Code'}
+          </Button>
+        </div>
       </div>
+      
+      <div 
+        style={{ 
+          padding: 'var(--space-8)',
+          backgroundColor: 'var(--bg-primary)',
+          border: '1px solid var(--border-primary)',
+          borderRadius: 'var(--radius-md)',
+          minHeight: '120px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          marginBottom: showCode ? 'var(--space-4)' : 0
+        }}
+      >
+        {demo}
+      </div>
+      
+      {showCode && (
+        <pre 
+          className="overflow-x-auto"
+          style={{
+            padding: 'var(--space-4)',
+            backgroundColor: 'var(--surface-alt)',
+            borderRadius: 'var(--radius-md)',
+            fontSize: 'var(--font-size-sm)',
+            border: '1px solid var(--border-primary)',
+            marginTop: 'var(--space-4)'
+          }}
+        >
+          <code>{code}</code>
+        </pre>
+      )}
     </div>
   );
 }
@@ -269,12 +274,6 @@ export default function ComponentGallery() {
     { title: 'Status', dataIndex: 'status', key: 'status' },
   ];
 
-  const tabsData = [
-    { label: 'Tab 1', icon: 'grid' },
-    { label: 'Tab 2', icon: 'list' },
-    { label: 'Tab 3', icon: 'settings' },
-  ];
-
   const components: ComponentCardProps[] = [
     {
       name: 'Button',
@@ -374,7 +373,7 @@ export default function ComponentGallery() {
     },
     {
       name: 'Badge',
-      description: 'Status indicator or label badge',
+      description: 'Status indicator or label badge (non-interactive)',
       demo: (
         <div className="flex flex-wrap" style={{ gap: 'var(--space-2)' }}>
           <Badge variant="normal">Normal</Badge>
@@ -389,6 +388,104 @@ export default function ComponentGallery() {
 <Badge variant="warning">Warning</Badge>
 <Badge variant="danger">Danger</Badge>
 <Badge variant="success">Success</Badge>`
+    },
+    {
+      name: 'QuickFilters',
+      description: 'Interactive filter chips for data filtering with single and multi-option support (clickable, with counts)',
+      demo: (
+        <div style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: 'var(--space-4)' }}>
+          {/* Single Option Filters */}
+          <div>
+            <h3 style={{ fontSize: 'var(--font-size-sm)', marginBottom: 'var(--space-2)', color: 'var(--secondary)' }}>Single Option Filters</h3>
+            <QuickFilters 
+              filters={[
+                { id: 'stoppage', label: 'Long Stoppage', count: 19, type: 'alert' },
+                { id: 'deviation', label: 'Route Deviation', count: 19, type: 'alert' },
+              ]}
+              onFilterClick={(filterId, optionId) => console.log('Filter clicked:', filterId, optionId)}
+              onFilterRemove={(filterId, optionId) => console.log('Filter removed:', filterId, optionId)}
+            />
+          </div>
+          
+          {/* Multi-Option Filters */}
+          <div>
+            <h3 style={{ fontSize: 'var(--font-size-sm)', marginBottom: 'var(--space-2)', color: 'var(--secondary)' }}>Multi-Option Filters</h3>
+            <QuickFilters 
+              filters={[
+                {
+                  id: 'delayed',
+                  label: 'Delayed',
+                  count: 51,
+                  type: 'normal',
+                  options: [
+                    { id: '0-6hrs', label: '0-6 hrs', count: 28, type: 'warning' },
+                    { id: '6-12hrs', label: '6-12 hrs', count: 18, type: 'warning' },
+                    { id: '12plus', label: '12+ hrs', count: 5, type: 'alert' }
+                  ]
+                },
+                {
+                  id: 'eway',
+                  label: 'E Way bill',
+                  type: 'normal',
+                  options: [
+                    { id: 'expiring', label: 'Expiring in 3 hrs', count: 28, type: 'warning' },
+                    { id: 'expired', label: 'Expired', count: 18, type: 'alert' }
+                  ]
+                },
+                {
+                  id: 'eta',
+                  label: 'ETA',
+                  type: 'normal',
+                  options: [
+                    { id: '6hrs', label: '6 hrs', count: 28, type: 'success' },
+                    { id: '12hrs', label: '12 hrs', count: 18, type: 'success' },
+                    { id: '24plus', label: '24+ hrs', count: 5, type: 'alert' }
+                  ]
+                }
+              ]}
+              onFilterClick={(filterId, optionId) => console.log('Filter clicked:', filterId, optionId)}
+              onFilterRemove={(filterId, optionId) => console.log('Filter removed:', filterId, optionId)}
+            />
+          </div>
+        </div>
+      ),
+      code: `// Single Option Filters
+<QuickFilters 
+  filters={[
+    { id: 'stoppage', label: 'Long Stoppage', count: 19, type: 'alert' },
+    { id: 'deviation', label: 'Route Deviation', count: 19, type: 'alert' },
+  ]}
+  onFilterClick={(filterId, optionId) => handleClick(filterId, optionId)}
+  onFilterRemove={(filterId, optionId) => handleRemove(filterId, optionId)}
+/>
+
+// Multi-Option Filters
+<QuickFilters 
+  filters={[
+    {
+      id: 'delayed',
+      label: 'Delayed',
+      count: 51,
+      type: 'normal',
+      options: [
+        { id: '0-6hrs', label: '0-6 hrs', count: 28, type: 'warning' },
+        { id: '6-12hrs', label: '6-12 hrs', count: 18, type: 'warning' },
+        { id: '12plus', label: '12+ hrs', count: 5, type: 'alert' }
+      ]
+    },
+    {
+      id: 'eway',
+      label: 'E Way bill',
+      type: 'normal',
+      options: [
+        { id: 'expiring', label: 'Expiring in 3 hrs', count: 28, type: 'warning' },
+        { id: 'expired', label: 'Expired', count: 18, type: 'alert' }
+      ]
+    }
+  ]}
+  onFilterClick={(filterId, optionId) => handleClick(filterId, optionId)}
+  onFilterRemove={(filterId, optionId) => handleRemove(filterId, optionId)}
+/>`
     },
     {
       name: 'Table',
@@ -415,7 +512,7 @@ const data = [
 <Table columns={columns} data={data} />`
     },
     {
-      name: 'Tabs (FT Design System)',
+      name: 'Tabs',
       description: 'Tab component from FT Design System with badges and icons',
       demo: (
         <div style={{ width: '100%' }}>
@@ -439,25 +536,6 @@ const data = [
   ]}
   activeTab={0}
 />`
-    },
-    {
-      name: 'Tabs (ft-design-system)',
-      description: 'Tabbed interface from external library',
-      demo: (
-        <div style={{ width: '100%' }}>
-          <Tabs 
-            tabs={tabsData}
-            className="bg-[var(--bg-primary)]"
-          />
-        </div>
-      ),
-      code: `const tabs = [
-  { label: 'Tab 1', icon: 'grid' },
-  { label: 'Tab 2', icon: 'list' },
-  { label: 'Tab 3', icon: 'settings' }
-];
-
-<Tabs tabs={tabs} />`
     },
     {
       name: 'ProgressBar',
@@ -544,6 +622,556 @@ const data = [
 <Switch 
   checked={enabled}
   onChange={(e) => setEnabled(e.target.checked)}
+/>`
+    },
+    {
+      name: 'Dropdown',
+      description: 'Select dropdown with search and segmentation support',
+      demo: (
+        <div style={{ width: '100%', maxWidth: '400px' }}>
+          <Dropdown 
+            label="Select Option"
+            options={[
+              { value: 'option1', label: 'Option 1' },
+              { value: 'option2', label: 'Option 2' },
+              { value: 'option3', label: 'Option 3' },
+              { value: 'option4', label: 'Option 4' },
+            ]}
+            placeholder="Choose an option"
+          />
+        </div>
+      ),
+      code: `<Dropdown 
+  label="Select Option"
+  options={[
+    { value: 'option1', label: 'Option 1' },
+    { value: 'option2', label: 'Option 2' },
+    { value: 'option3', label: 'Option 3' },
+  ]}
+  placeholder="Choose an option"
+/>`
+    },
+    {
+      name: 'DatePicker',
+      description: 'Date and time selection component with range support',
+      demo: (
+        <div style={{ width: '100%', maxWidth: '400px' }}>
+          <DatePicker 
+            label="Select Date"
+            placeholder="Choose a date"
+          />
+        </div>
+      ),
+      code: `<DatePicker 
+  label="Select Date"
+  placeholder="Choose a date"
+/>`
+    },
+    {
+      name: 'Statistic',
+      description: 'Display numeric data with labels',
+      demo: (
+        <div style={{ display: 'flex', gap: 'var(--space-6)', flexWrap: 'wrap' }}>
+          <Statistic label="Total Orders" value="1,234" labelPlacement="Top" />
+          <Statistic label="Revenue" value="$45.2K" labelPlacement="Below" />
+          <Statistic label="Active Users" value="892" labelPlacement="Top" />
+        </div>
+      ),
+      code: `<Statistic label="Total Orders" value="1,234" labelPlacement="Top" />
+<Statistic label="Revenue" value="$45.2K" labelPlacement="Below" />`
+    },
+    {
+      name: 'Text',
+      description: 'Typography text component with various sizes',
+      demo: (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-3)' }}>
+          <Text size="xs">Extra Small Text</Text>
+          <Text size="sm">Small Text</Text>
+          <Text size="md">Medium Text (Default)</Text>
+          <Text size="lg">Large Text</Text>
+          <Text size="xl">Extra Large Text</Text>
+        </div>
+      ),
+      code: `<Text size="xs">Extra Small Text</Text>
+<Text size="sm">Small Text</Text>
+<Text size="md">Medium Text</Text>
+<Text size="lg">Large Text</Text>`
+    },
+    {
+      name: 'SubText',
+      description: 'Secondary text component for captions and metadata',
+      demo: (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-2)' }}>
+          <SubText icon="No">This is secondary text without icon</SubText>
+          <SubText icon="Yes">This is secondary text with check icon</SubText>
+        </div>
+      ),
+      code: `<SubText icon="No">Secondary text without icon</SubText>
+<SubText icon="Yes">Secondary text with check icon</SubText>`
+    },
+    {
+      name: 'Card',
+      description: 'Container card component with eyebrow and footer sections',
+      demo: (
+        <div style={{ width: '100%', maxWidth: '400px' }}>
+          <Card 
+            content="Advanced"
+            showEyebrow={true}
+            showFooter={true}
+          />
+        </div>
+      ),
+      code: `<Card 
+  content="Advanced"
+  showEyebrow={true}
+  showFooter={true}
+/>`
+    },
+    {
+      name: 'DisplayBlock',
+      description: 'Display blocks for data visualization',
+      demo: (
+        <DisplayBlock 
+          layout="Horizontal"
+          blocks="3"
+          padding="True"
+        />
+      ),
+      code: `<DisplayBlock 
+  layout="Horizontal"
+  blocks="3"
+  padding="True"
+/>`
+    },
+    {
+      name: 'NavigationMenu',
+      description: 'Side navigation menu with footer actions',
+      demo: (
+        <div style={{ width: '100%', maxWidth: '300px', height: '400px' }}>
+          <NavigationMenu 
+            onNavigate={(item) => console.log('Navigate to:', item)}
+            onClose={() => console.log('Close menu')}
+          />
+        </div>
+      ),
+      code: `<NavigationMenu 
+  onNavigate={(item) => console.log('Navigate:', item)}
+  onClose={() => console.log('Close')}
+/>`
+    },
+    {
+      name: 'AppHeader',
+      description: 'Application header with user profile and notifications',
+      demo: (
+        <div style={{ width: '100%' }}>
+          <AppHeader 
+            size="Default"
+            device="Desktop"
+            user={{
+              name: 'John Doe',
+              role: 'Administrator',
+              location: 'Mumbai, India'
+            }}
+            userCompany={{
+              name: 'ft',
+              displayName: 'Freight Tiger'
+            }}
+          />
+        </div>
+      ),
+      code: `<AppHeader 
+  size="Default"
+  device="Desktop"
+  user={{
+    name: 'John Doe',
+    role: 'Administrator',
+    location: 'Mumbai'
+  }}
+/>`
+    },
+    {
+      name: 'Footer',
+      description: 'Page footer with action buttons',
+      demo: (
+        <Footer 
+          buttonCount={3}
+          leftSideButton={true}
+          buttonTexts={['Cancel', 'Save Draft', 'Submit']}
+          buttonVariants={['text', 'secondary', 'primary']}
+        />
+      ),
+      code: `<Footer 
+  buttonCount={3}
+  leftSideButton={true}
+  buttonTexts={['Cancel', 'Save Draft', 'Submit']}
+  buttonVariants={['text', 'secondary', 'primary']}
+/>`
+    },
+    {
+      name: 'UserProfile',
+      description: 'User profile dropdown with company info',
+      demo: (
+        <UserProfile 
+          userName="John Doe"
+          userRole="Administrator"
+          userLocation="Mumbai, India"
+          company={{
+            name: 'ft',
+            displayName: 'Freight Tiger'
+          }}
+        />
+      ),
+      code: `<UserProfile 
+  userName="John Doe"
+  userRole="Administrator"
+  userLocation="Mumbai, India"
+  company={{ name: 'ft' }}
+/>`
+    },
+    {
+      name: 'Collapsible',
+      description: 'Expandable collapsible section with badges',
+      demo: (
+        <div style={{ width: '100%' }}>
+          <Collapsible 
+            header="Shipment Details"
+            badges={{ loads: 5, invoices: 3 }}
+            isExpanded={false}
+          >
+            <p style={{ padding: 'var(--space-4)', color: 'var(--secondary)' }}>
+              Collapsible content goes here
+            </p>
+          </Collapsible>
+        </div>
+      ),
+      code: `<Collapsible 
+  header="Shipment Details"
+  badges={{ loads: 5, invoices: 3 }}
+  isExpanded={false}
+>
+  <p>Content here</p>
+</Collapsible>`
+    },
+    {
+      name: 'Steps',
+      description: 'Step progress indicator for multi-step processes',
+      demo: (
+        <div style={{ width: '100%' }}>
+          <Steps 
+            steps={[
+              { label: 'Details', completed: true },
+              { label: 'Review', completed: false },
+              { label: 'Payment', completed: false },
+              { label: 'Confirm', completed: false },
+            ]}
+            currentStep={1}
+            device="desktop"
+          />
+        </div>
+      ),
+      code: `<Steps 
+  steps={[
+    { label: 'Details', completed: true },
+    { label: 'Review', completed: false },
+    { label: 'Payment', completed: false },
+  ]}
+  currentStep={1}
+/>`
+    },
+    {
+      name: 'RadioSelector',
+      description: 'Radio cards with headers and descriptions',
+      demo: (
+        <div style={{ width: '100%' }}>
+          <RadioSelector 
+            name="payment-method"
+            defaultValue="card"
+            options={[
+              {
+                value: 'card',
+                header: 'Credit Card',
+                description: 'Pay with credit or debit card'
+              },
+              {
+                value: 'bank',
+                header: 'Bank Transfer',
+                description: 'Direct bank transfer'
+              },
+              {
+                value: 'wallet',
+                header: 'Digital Wallet',
+                description: 'Use UPI or wallet'
+              },
+            ]}
+          />
+        </div>
+      ),
+      code: `<RadioSelector 
+  name="payment-method"
+  options={[
+    {
+      value: 'card',
+      header: 'Credit Card',
+      description: 'Pay with card'
+    }
+  ]}
+/>`
+    },
+    {
+      name: 'SegmentedTabs',
+      description: 'Segmented control tabs',
+      demo: (
+        <SegmentedTabs 
+          items={[
+            { label: 'Day', value: 'day' },
+            { label: 'Week', value: 'week' },
+            { label: 'Month', value: 'month' },
+            { label: 'Year', value: 'year' },
+          ]}
+          defaultValue="week"
+        />
+      ),
+      code: `<SegmentedTabs 
+  items={[
+    { label: 'Day', value: 'day' },
+    { label: 'Week', value: 'week' },
+    { label: 'Month', value: 'month' },
+  ]}
+  defaultValue="week"
+/>`
+    },
+    {
+      name: 'ButtonGroup',
+      description: 'Group of buttons displayed together with consistent styling',
+      demo: (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-4)', width: '100%' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-2)' }}>
+            <p style={{ fontSize: 'var(--font-size-sm)', color: 'var(--secondary)', fontWeight: 'var(--font-weight-medium)' }}>Default Button Group</p>
+            <ButtonGroup 
+              buttons={[
+                { id: '1', label: 'Save', variant: 'primary' },
+                { id: '2', label: 'Cancel', variant: 'secondary' },
+                { id: '3', label: 'Delete', variant: 'destructive' },
+              ]}
+            />
+          </div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-2)' }}>
+            <p style={{ fontSize: 'var(--font-size-sm)', color: 'var(--secondary)', fontWeight: 'var(--font-weight-medium)' }}>Equal Width Buttons</p>
+            <ButtonGroup 
+              buttons={[
+                { id: '4', label: 'Option 1', variant: 'secondary' },
+                { id: '5', label: 'Option 2', variant: 'secondary' },
+                { id: '6', label: 'Option 3', variant: 'secondary' },
+              ]}
+              equalWidth={true}
+            />
+          </div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-2)' }}>
+            <p style={{ fontSize: 'var(--font-size-sm)', color: 'var(--secondary)', fontWeight: 'var(--font-weight-medium)' }}>With Icons</p>
+            <ButtonGroup 
+              buttons={[
+                { id: '7', label: 'Add', variant: 'primary', icon: 'add' },
+                { id: '8', label: 'Edit', variant: 'secondary', icon: 'edit' },
+                { id: '9', label: 'Delete', variant: 'destructive', icon: 'delete' },
+              ]}
+            />
+          </div>
+        </div>
+      ),
+      code: `<ButtonGroup 
+  buttons={[
+    { id: '1', label: 'Save', variant: 'primary' },
+    { id: '2', label: 'Cancel', variant: 'secondary' },
+    { id: '3', label: 'Delete', variant: 'destructive' },
+  ]}
+/>
+
+{/* Equal width buttons */}
+<ButtonGroup 
+  buttons={[
+    { id: '4', label: 'Option 1', variant: 'secondary' },
+    { id: '5', label: 'Option 2', variant: 'secondary' },
+  ]}
+  equalWidth={true}
+/>
+
+{/* With icons */}
+<ButtonGroup 
+  buttons={[
+    { id: '6', label: 'Add', variant: 'primary', icon: 'add' },
+    { id: '7', label: 'Edit', variant: 'secondary', icon: 'edit' },
+  ]}
+/>`
+    },
+    {
+      name: 'UploadZone',
+      description: 'File upload drop zone',
+      demo: (
+        <div style={{ width: '100%' }}>
+          <UploadZone 
+            onFileSelect={(files) => console.log('Files:', files)}
+            acceptedFileTypes={['.pdf', '.xlsx', '.csv']}
+            multiple={true}
+          />
+        </div>
+      ),
+      code: `<UploadZone 
+  onFileSelect={(files) => console.log(files)}
+  acceptedFileTypes={['.pdf', '.xlsx']}
+  multiple={true}
+/>`
+    },
+    {
+      name: 'FileCard',
+      description: 'File upload card with status and actions',
+      demo: (
+        <div style={{ width: '100%' }}>
+          <FileCard 
+            fileName="invoice-data.xlsx"
+            fileType="xlsx"
+            fileDate="2 mins ago"
+            status="processed"
+            stats={{ total: 150, success: 148, invalid: 2 }}
+            variant="with-stats"
+          />
+        </div>
+      ),
+      code: `<FileCard 
+  fileName="invoice.xlsx"
+  fileType="xlsx"
+  status="processed"
+  stats={{ total: 150, success: 148, invalid: 2 }}
+/>`
+    },
+    {
+      name: 'FileThumbnail',
+      description: 'File thumbnail with download action',
+      demo: (
+        <FileThumbnail 
+          fileName="document.pdf"
+          variant="uploaded"
+          onDownload={() => console.log('Download')}
+        />
+      ),
+      code: `<FileThumbnail 
+  fileName="document.pdf"
+  variant="uploaded"
+  onDownload={() => console.log('Download')}
+/>`
+    },
+    {
+      name: 'FileTypeIcon',
+      description: 'File type icon indicator',
+      demo: (
+        <div style={{ display: 'flex', gap: 'var(--space-4)' }}>
+          <FileTypeIcon fileType="pdf" size="sm" />
+          <FileTypeIcon fileType="xlsx" size="md" />
+          <FileTypeIcon fileType="csv" size="lg" />
+          <FileTypeIcon fileType="doc" size="md" variant="error" />
+        </div>
+      ),
+      code: `<FileTypeIcon fileType="pdf" size="sm" />
+<FileTypeIcon fileType="xlsx" size="md" />
+<FileTypeIcon fileType="csv" size="lg" />`
+    },
+    {
+      name: 'Typography',
+      description: 'Typography component for text formatting',
+      demo: (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-3)' }}>
+          <Typography>Default typography text</Typography>
+          <Typography>Formatted text component</Typography>
+        </div>
+      ),
+      code: `<Typography>Default typography text</Typography>`
+    },
+    {
+      name: 'Icons (200+ Available)',
+      description: 'Complete icon library from ft-design-system',
+      demo: (
+        <div style={{ width: '100%' }}>
+          <div style={{ 
+            display: 'grid', 
+            gridTemplateColumns: 'repeat(auto-fill, minmax(80px, 1fr))', 
+            gap: 'var(--space-3)',
+            maxHeight: '400px',
+            overflow: 'auto',
+            padding: 'var(--space-2)',
+            backgroundColor: 'var(--surface-alt)',
+            borderRadius: 'var(--radius-md)'
+          }}>
+            {[
+              'add', 'check', 'close', 'delete', 'edit', 'download', 'upload',
+              'search', 'filter', 'calendar', 'clock', 'bell', 'user', 'settings',
+              'arrow-up', 'arrow-down', 'arrow-left', 'arrow-right',
+              'chevron-up', 'chevron-down', 'chevron-left', 'chevron-right',
+              'mail', 'phone', 'location', 'home', 'dashboard', 'reports',
+              'truck', 'warehouse', 'vehicle', 'tracker', 'gps', 'map',
+              'rupee-coin', 'document', 'file', 'excel', 'save', 'copy',
+              'play', 'preview', 'refresh', 'share', 'star', 'success'
+            ].map((iconName) => (
+              <div 
+                key={iconName} 
+                style={{ 
+                  display: 'flex', 
+                  flexDirection: 'column', 
+                  alignItems: 'center', 
+                  gap: 'var(--space-1)',
+                  padding: 'var(--space-2)',
+                  backgroundColor: 'var(--surface)',
+                  borderRadius: 'var(--radius-sm)',
+                  border: '1px solid var(--border-primary)'
+                }}
+              >
+                <Button variant="secondary" icon={iconName} style={{ minWidth: '40px' }} />
+                <span style={{ 
+                  fontSize: 'var(--font-size-xs)', 
+                  color: 'var(--secondary)',
+                  textAlign: 'center',
+                  wordBreak: 'break-word'
+                }}>
+                  {iconName}
+                </span>
+              </div>
+            ))}
+          </div>
+          <p style={{ 
+            marginTop: 'var(--space-4)', 
+            fontSize: 'var(--font-size-sm)', 
+            color: 'var(--secondary)',
+            textAlign: 'center'
+          }}>
+            Showing 48 of 200+ available icons. Import from ft-design-system/ai
+          </p>
+        </div>
+      ),
+      code: `// Use icons with Button component
+<Button variant="primary" icon="add">Add Item</Button>
+<Button variant="secondary" icon="check">Confirm</Button>
+<Button variant="text" icon="download">Download</Button>
+<Button variant="link" icon="arrow-right">Next</Button>
+
+// Available icons include:
+// add, check, close, delete, edit, download, upload,
+// search, filter, calendar, clock, bell, user, settings,
+// arrow-*, chevron-*, mail, phone, location, home,
+// dashboard, reports, truck, warehouse, vehicle, tracker,
+// gps, rupee-coin, document, file, excel, save, copy,
+// and 200+ more...`
+    },
+    {
+      name: 'Breadcrumb (Example)',
+      description: 'Navigation breadcrumb - Not available in package',
+      demo: (
+        <MissingComponent 
+          name="Breadcrumb"
+          description="Component for showing navigation path"
+        />
+      ),
+      code: `// Component not available in ft-design-system/ai
+<MissingComponent 
+  name="Breadcrumb"
+  description="Component for showing navigation path"
 />`
     },
   ];
@@ -1194,21 +1822,15 @@ const data = [
         </div>
       </div>
 
-      {/* Component Grid */}
+      {/* Component List - Full Width */}
       <div style={{ 
         maxWidth: '1440px',
         margin: '0 auto',
-        padding: '0 var(--space-5) var(--space-8)'
+        padding: '0 var(--space-8) var(--space-8)'
       }}>
-        <div style={{ 
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))',
-          gap: 'var(--space-4)'
-        }}>
-          {components.map((component) => (
-            <ComponentCard key={component.name} {...component} />
-          ))}
-        </div>
+        {components.map((component) => (
+          <ComponentCard key={component.name} {...component} />
+        ))}
       </div>
     </div>
   );

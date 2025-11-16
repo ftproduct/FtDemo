@@ -1,0 +1,120 @@
+---
+alwaysApply: true
+---
+# Missing Component Placeholder Pattern
+
+## 🎯 Core Principle
+**When a Figma design references a component that doesn't exist in `ft-design-system/ai`, ALWAYS use the MissingComponent placeholder.**
+
+## ✅ Required Pattern
+
+### When Component is Not Available
+
+```typescript
+import { MissingComponent } from '../components/MissingComponent';
+
+// ✅ CORRECT - Use placeholder for missing components
+<MissingComponent 
+  name="ComponentName" 
+  description="Brief description of the component from design"
+/>
+
+// ❌ WRONG - Don't build custom components
+<div className="custom-component">...</div>
+
+// ❌ WRONG - Don't use shadcn/ui or other libraries
+import { CustomComponent } from '../ui/custom-component';
+```
+
+## 📦 Component Location
+- Path: `/src/components/MissingComponent.tsx`
+- Import: `import { MissingComponent } from '../components/MissingComponent';`
+
+## 🎨 Usage Examples
+
+### In Component Gallery
+```typescript
+{
+  name: 'Missing Component Name',
+  description: 'Description from Figma design',
+  demo: (
+    <MissingComponent 
+      name="ComponentName"
+      description="This component is shown in the design but not available in ft-design-system yet"
+    />
+  ),
+  code: `// Component not available in ft-design-system/ai
+<MissingComponent name="ComponentName" />`
+}
+```
+
+### In Production Pages
+```typescript
+// If design requires a component not in the package
+const ComponentFromDesign = () => {
+  return (
+    <MissingComponent
+      name="Breadcrumb"
+      description="Navigation breadcrumb component"
+    />
+  );
+};
+```
+
+## 🚫 Forbidden Practices
+
+### ❌ NEVER Do This:
+```typescript
+// Don't create custom implementations
+const MyCustomButton = () => { /* ... */ };
+
+// Don't use local ui/ components if npm version exists
+import { Button } from '../ui/button';
+
+// Don't build workarounds
+const FakePlaceholder = () => <div>Coming soon</div>;
+```
+
+### ✅ ALWAYS Do This:
+```typescript
+// Use MissingComponent for unavailable components
+import { MissingComponent } from '../components/MissingComponent';
+
+<MissingComponent 
+  name="ComponentName"
+  description="From Figma design - not in npm package"
+/>
+```
+
+## 📝 Props Interface
+
+```typescript
+interface MissingComponentProps {
+  name: string;           // Component name from design
+  description?: string;   // Optional: What the component should do
+}
+```
+
+## 🎯 When to Use
+
+1. **Design has a component** not in `ft-design-system/ai`
+2. **Requested feature** needs a component that doesn't exist
+3. **Figma mockup** shows a component unavailable in the package
+4. **Migration scenario** where old component has no npm equivalent
+
+## ✅ Benefits
+
+- **Visual consistency**: Clear indication of missing components
+- **No custom code**: Avoid building duplicate components
+- **Easy tracking**: See what components are needed
+- **Design feedback**: Designers can see what's missing in the package
+- **Clean codebase**: No scattered placeholder implementations
+
+## 🔍 Code Review Checklist
+
+Before committing, verify:
+- [ ] No custom component implementations for available npm components
+- [ ] MissingComponent used for unavailable components
+- [ ] No imports from `../ui/` folder (except MissingComponent)
+- [ ] No duplicate component implementations
+- [ ] All components from `ft-design-system/ai` or MissingComponent

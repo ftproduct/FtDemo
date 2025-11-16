@@ -1,36 +1,58 @@
-# UI Components Folder - NOT IN USE
+# ⚠️ DEPRECATED - DO NOT USE
 
-⚠️ **IMPORTANT**: This folder contains shadcn/ui components that are **NOT** part of the FT Design System.
+## This folder contains shadcn/ui components that are **DEPRECATED**.
 
-## Status
-These components are **deprecated** and should **NOT** be used in new code. All components should use FT Design System components from `ft-design-system/ai` instead.
+### ❌ Do NOT import from this folder
 
-## Migration
-- Use `Button` from `ft-design-system/ai` instead of `ui/button`
-- Use `Input` from `ft-design-system/ai` instead of `ui/input`
-- Use `Badge` from `ft-design-system/ai` instead of `ui/badge`
-- Use `Tabs` from `ft-design-system/ai` instead of `ui/tabs`
-- And so on...
+All UI components should come from the official npm package:
 
-## Why Keep This Folder?
-This folder is kept for reference only. It may be removed in the future once all components are confirmed to be using FT Design System.
+```typescript
+// ✅ CORRECT - Use ft-design-system/ai
+import { Button, Input, Badge, Tabs, Table, Checkbox, Switch } from 'ft-design-system/ai';
 
-## FT Design System Components
-Import from: `ft-design-system/ai`
+// ❌ WRONG - Don't use these
+import { Button } from './ui/button';
+import { Input } from './ui/input';
+```
 
-Available components:
-- Button
-- Input
-- Badge
-- Checkbox
-- Switch
-- RadioGroup
-- Table
-- Tabs
-- ProgressBar
-- DatePicker
-- Dropdown
-- And more...
+### Why these files still exist
 
-See: https://ftdesignsystem.netlify.app/
+These files are kept temporarily for reference but should **NOT** be used in any new or existing code.
 
+### Migration Status
+
+- **Button** → Use `Button` from `ft-design-system/ai` ✅
+- **Input** → Use `Input` from `ft-design-system/ai` ✅
+- **Badge** → Use `Badge` from `ft-design-system/ai` ✅
+- **Tabs** → Use `Tabs` from `ft-design-system/ai` ✅
+- **Table** → Use `Table` from `ft-design-system/ai` ✅
+- **Checkbox** → Use `Checkbox` from `ft-design-system/ai` ✅
+- **Switch** → Use `Switch` from `ft-design-system/ai` ✅
+- **Dropdown** → Use `Dropdown` from `ft-design-system/ai` ✅
+- **ProgressBar** → Use `ProgressBar` from `ft-design-system/ai` ✅
+- **RadioGroup** → Use `RadioGroup` from `ft-design-system/ai` ✅
+
+### For components not in ft-design-system/ai
+
+Use the `MissingComponent` placeholder:
+
+```typescript
+import { MissingComponent } from '../MissingComponent';
+
+<MissingComponent 
+  name="ComponentName"
+  description="Description from design"
+/>
+```
+
+### Action Required
+
+If you see imports from `./ui/` in code review:
+1. Replace with `ft-design-system/ai` import
+2. Or use `MissingComponent` if not available
+3. Remove the ui/ import
+
+---
+
+**Last Updated:** November 2025  
+**Status:** Deprecated - Scheduled for removal

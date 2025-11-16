@@ -74,6 +74,7 @@ p, h1, h2, h3, h4, h5, h6 {
   --primary: #434f64;        /* Main text, primary actions */
   --secondary: #5f697b;      /* Secondary text, muted content */
   --tertiary: #838c9d;       /* Subtle text, disabled states */
+  --overlay-scrim: rgba(67, 79, 100, 0.55);
   
   /* Border Colors */
   --border-primary: #ced1d7;    /* Primary borders, form elements */
@@ -307,6 +308,7 @@ p, h1, h2, h3, h4, h5, h6 {
   --border-secondary: #334155; /* Dark dividers */
   --bg-secondary: #0f172a;   /* Page background */
   --bg-primary: #1e293b;     /* Cards/surfaces */
+  --overlay-scrim: rgba(15, 23, 42, 0.8);
   
   /* Button Colors */
   --button-primary-bg: #e2e8f0;
@@ -410,6 +412,7 @@ p, h1, h2, h3, h4, h5, h6 {
   --border-secondary: #202020; /* Dividers */
   --bg-secondary: #000000;   /* TRUE BLACK background */
   --bg-primary: #1a1a1a;     /* Cards/surfaces */
+  --overlay-scrim: rgba(0, 0, 0, 0.85);
   
   /* Button Colors */
   --button-primary-bg: #f0f0f0;
@@ -639,6 +642,18 @@ p, h1, h2, h3, h4, h5, h6 {
 .transition-fast { transition: var(--transition-fast) !important; }
 .transition-normal { transition: var(--transition-normal) !important; }
 .transition-slow { transition: var(--transition-slow) !important; }
+
+/* Quick Filters Layout Helpers */
+.quick-filter-scroll {
+  overflow-x: auto;
+  padding-bottom: var(--space-2);
+  margin-bottom: var(--space-3);
+}
+
+.quick-filter-row {
+  flex-wrap: nowrap !important;
+  min-width: max-content;
+}
 
 /* =====================================================
    COMPONENT BASE STYLES

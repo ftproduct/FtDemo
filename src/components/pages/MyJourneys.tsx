@@ -1,444 +1,689 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
+import { 
+  Tabs, 
+  Badge, 
+  Button, 
+  Input, 
+  Table, 
+  Checkbox, 
+  Dropdown,
+  QuickFilters,
+  DatePicker,
+  type TableColumn
+} from 'ft-design-system/ai';
+import { type Journey } from '../../api/journeys';
 import '../../styles/globals.css';
-import { Button, Tabs } from 'ft-design-system/ai';
-import { fetchJourneys, fetchJourneyCountsByStatus, type Journey, type JourneyFilters } from '../../api/journeys';
+import AppHeader from '../AppHeader';
+import {
+  Home,
+  LayoutList,
+  Map,
+  RefreshCw,
+  Share2,
+  Download,
+  Upload,
+  Settings,
+  Filter,
+  ChevronLeft,
+  ChevronRight,
+  Calendar,
+  Search,
+  MoreHorizontal,
+  ArrowRight,
+  Clock,
+  MapPin,
+  CheckCircle2,
+  AlertCircle
+} from 'lucide-react';
 
-export default function MyJourneys() {
+interface MyJourneysProps {
+  onOpenNavigation: () => void;
+}
+
+export default function MyJourneys({ onOpenNavigation }: MyJourneysProps) {
   const [journeys, setJourneys] = useState<Journey[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [selectedTab, setSelectedTab] = useState<string>('all');
-  const [journeyCounts, setJourneyCounts] = useState<Record<string, number>>({});
-  const [totalCount, setTotalCount] = useState(0);
+  const [filteredJourneys, setFilteredJourneys] = useState<Journey[]>([]);
+  const [selectedTab, setSelectedTab] = useState(3); // In Transit is default
+  const [totalCount, setTotalCount] = useState(56);
+  const [viewMode, setViewMode] = useState<'list' | 'map'>('list');
+  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedJourneyIds, setSelectedJourneyIds] = useState<number[]>([]);
+  const [page, setPage] = useState(1);
+  const [activeFilters, setActiveFilters] = useState<Set<string>>(new Set());
 
-  // Map tab labels to database tab_status values
-  const tabStatusMap: Record<string, string | undefined> = {
-    'all': undefined,
-    'planning': 'planned',
-    'in_transit': 'in_transit',
-    'completed': 'delivered',
-    'invoiced': 'delivered', // Assuming invoiced journeys are delivered
-  };
+  // Mock data
+  const mockJourneys: Journey[] = [
+    {
+      journey_id: 1,
+      feed_unique_id: '324673-948B478-84...',
+      origin_display: 'Amritsar, Punjab',
+      origin_company_display: 'MDC Labs ltd',
+      destination_display: 'Mumbai, M...',
+      destination_company_display: 'Maa kaali Distribut...',
+      vehicle_number: 'PB09 HH 6439',
+      transporter_name: 'Yonex Transporter',
+      trip_type_display: 'SIM',
+      trip_id: '84973-47593',
+      status_display: 'On Road',
+      current_location_display: 'Ambala, Haryana',
+      sla_status: 'on_time',
+      sla_status_display: 'On time',
+      eta_display: 'ETA: 12:30 pm, 12 Aug',
+      alert_type: null,
+      alert_time_display: null,
+      tab_status: 'in_transit',
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString()
+    },
+    {
+      journey_id: 2,
+      feed_unique_id: '324673-948B478-84...',
+      origin_display: 'Amritsar, Punjab',
+      origin_company_display: 'MDC Labs LTD',
+      destination_display: 'Secunderabad, Tel...',
+      destination_company_display: 'Sai Traders',
+      vehicle_number: 'KA12 AS 3422',
+      transporter_name: 'Laal Kamal Trans...',
+      trip_type_display: 'GPS',
+      trip_id: '84973-47593',
+      status_display: 'At Pickup',
+      current_location_display: 'Ambala, Haryana',
+      sla_status: 'delayed',
+      sla_status_display: 'Delayed by 13 hr',
+      eta_display: 'ETA: 12:30 pm, 12 Aug',
+      alert_type: 'long_stoppage',
+      alert_time_display: '1 hour ago',
+      tab_status: 'in_transit',
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString()
+    },
+    {
+      journey_id: 3,
+      feed_unique_id: '324673-948B478-84...',
+      origin_display: 'Amritsar, Punjab',
+      origin_company_display: 'MDC Labs LTD',
+      destination_display: 'Secunderabad, Tel...',
+      destination_company_display: 'Sai Traders',
+      vehicle_number: 'KA12 AS 3423',
+      transporter_name: 'Laal Kamal Trans...',
+      trip_type_display: 'Fastag',
+      trip_id: '84973-47593',
+      status_display: 'At Drop',
+      current_location_display: 'Ambala, Haryana',
+      sla_status: 'delayed',
+      sla_status_display: 'Delayed by 13 hr',
+      eta_display: 'ETA: 12:30 pm, 12 Aug',
+      alert_type: 'route_deviation',
+      alert_time_display: '1 hour ago',
+      tab_status: 'in_transit',
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString()
+    },
+    {
+      journey_id: 4,
+      feed_unique_id: '324673-948B478-84...',
+      origin_display: 'Amritsar, Punjab',
+      origin_company_display: 'MDC Labs LTD',
+      destination_display: 'Siddipet, Telangana',
+      destination_company_display: 'Jai Sri Ram',
+      vehicle_number: 'KA12 AS 3424',
+      transporter_name: 'Laal Kamal Trans...',
+      trip_type_display: 'GPS',
+      trip_id: '84973-47593',
+      status_display: 'On Road',
+      current_location_display: 'at 12:30 pm, 12 Aug',
+      sla_status: 'on_time',
+      sla_status_display: 'On time',
+      eta_display: 'ETA: 12:30 pm, 12 Aug',
+      alert_type: null,
+      alert_time_display: null,
+      tab_status: 'in_transit',
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString()
+    },
+    {
+      journey_id: 5,
+      feed_unique_id: '324673-948B478-84...',
+      origin_display: 'Amritsar, Punjab',
+      origin_company_display: 'MDC Labs LTD',
+      destination_display: 'Secunderabad, Tel...',
+      destination_company_display: 'Sai Traders',
+      vehicle_number: 'KA12 AS 3423',
+      transporter_name: 'Laal Kamal Trans...',
+      trip_type_display: 'Fastag',
+      trip_id: '84973-47593',
+      status_display: 'On Road',
+      current_location_display: 'Ambala, Haryana',
+      sla_status: 'delayed',
+      sla_status_display: 'Delayed by 13 hr',
+      eta_display: 'ETA: 12:30 pm, 12 Aug',
+      alert_type: 'transit_delay',
+      alert_time_display: '1 hour ago',
+      tab_status: 'in_transit',
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString()
+    },
+    {
+      journey_id: 6,
+      feed_unique_id: '324673-948B478-84...',
+      origin_display: 'Amritsar, Punjab',
+      origin_company_display: 'MDC Labs LTD',
+      destination_display: 'Secunderabad, Tel...',
+      destination_company_display: 'Sai Traders',
+      vehicle_number: 'KA12 AS 3421',
+      transporter_name: 'Laal Kamal Trans...',
+      trip_type_display: 'SIM',
+      trip_id: '84973-47593',
+      status_display: 'At Drop',
+      current_location_display: 'Ambala, Haryana',
+      sla_status: 'on_time',
+      sla_status_display: 'On time',
+      eta_display: 'ETA: 12:30 pm, 12 Aug',
+      alert_type: null,
+      alert_time_display: null,
+      tab_status: 'in_transit',
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString()
+    }
+  ];
 
-  // Fetch journey counts by status
-  useEffect(() => {
-    const loadCounts = async () => {
-      try {
-        const counts = await fetchJourneyCountsByStatus();
-        const countsMap: Record<string, number> = {};
-        let total = 0;
-        
-        counts.forEach(({ tab_status, count }) => {
-          countsMap[tab_status] = parseInt(String(count));
-          total += parseInt(String(count));
-        });
-        
-        setJourneyCounts(countsMap);
-        setTotalCount(total);
-      } catch (err) {
-        console.error('Failed to load journey counts:', err);
-      }
+  // Calculate counts from actual data
+  const calculateTabCounts = React.useMemo(() => {
+    const allJourneys = journeys.length > 0 ? journeys : mockJourneys;
+    return {
+      planned: allJourneys.filter(j => j.tab_status === 'planned').length,
+      en_route_to_loading: allJourneys.filter(j => j.tab_status === 'en_route_to_loading').length,
+      at_loading: allJourneys.filter(j => j.tab_status === 'at_loading').length,
+      in_transit: allJourneys.filter(j => j.tab_status === 'in_transit').length,
+      at_unloading: allJourneys.filter(j => j.tab_status === 'at_unloading').length,
+      in_return: allJourneys.filter(j => j.tab_status === 'in_return').length,
+      delivered: allJourneys.filter(j => j.tab_status === 'delivered').length
     };
-    
-    loadCounts();
-  }, []);
+  }, [journeys]);
 
-  // Fetch journeys when tab changes
-  useEffect(() => {
-    const loadJourneys = async () => {
-      setLoading(true);
-      setError(null);
-      
-      try {
-        const filters: JourneyFilters = {
-          tab_status: tabStatusMap[selectedTab],
-          limit: 50,
-          offset: 0,
-        };
-        
-        const response = await fetchJourneys(filters);
-        setJourneys(response.journeys);
-        setTotalCount(response.pagination.total);
-      } catch (err) {
-        setError(err instanceof Error ? err.message : 'Failed to load journeys');
-        console.error('Error loading journeys:', err);
-      } finally {
-        setLoading(false);
-      }
-    };
+  const calculateFilterCounts = React.useMemo(() => {
+    const allJourneys = journeys.length > 0 ? journeys : mockJourneys;
+    const delayed = allJourneys.filter(j => j.sla_status === 'delayed');
+    const longStoppage = allJourneys.filter(j => j.alert_type === 'long_stoppage').length;
+    const routeDeviation = allJourneys.filter(j => j.alert_type === 'route_deviation').length;
     
-    loadJourneys();
+    return {
+      stoppage: longStoppage,
+      deviation: routeDeviation,
+      delayed: delayed.length,
+      '0-6hrs': delayed.length, // For demo, using delayed count
+      '6-12hrs': 0, // Would need actual delay hours in real data
+      '12plus': 0, // Would need actual delay hours in real data
+      expiring: 0, // Would need e-way bill data
+      expired: 0, // Would need e-way bill data
+      '6hrs': 0, // Would need ETA data
+      '12hrs': 0, // Would need ETA data
+      '24plus': 0 // Would need ETA data
+    };
+  }, [journeys]);
+
+  // Tabs configuration with icons - using dynamic counts
+  const tabs = [
+    { label: 'Planned', badge: true, badgeCount: calculateTabCounts.planned, icon: true },
+    { label: 'En Route to Loading', badge: true, badgeCount: calculateTabCounts.en_route_to_loading, icon: true },
+    { label: 'At Loading', badge: true, badgeCount: calculateTabCounts.at_loading, icon: true },
+    { label: 'In Transit', badge: true, badgeCount: calculateTabCounts.in_transit, icon: true },
+    { label: 'At Unloading', badge: true, badgeCount: calculateTabCounts.at_unloading, icon: true },
+    { label: 'In Return', badge: true, badgeCount: calculateTabCounts.in_return, icon: true },
+    { label: 'Delivered', badge: true, badgeCount: calculateTabCounts.delivered, icon: true }
+  ];
+
+  useEffect(() => {
+    // Map journeys to include 'id' property required by Table component
+    const journeysWithId = mockJourneys.map(journey => ({
+      ...journey,
+      id: journey.journey_id
+    }));
+    setJourneys(journeysWithId);
+    setSelectedJourneyIds([]);
   }, [selectedTab]);
 
-  const journeyTabs = [
-    { 
-      label: 'All Journeys', 
-      icon: 'grid', 
-      badge: totalCount > 0 ? String(totalCount) : undefined 
+  // Filter journeys based on active filters
+  useEffect(() => {
+    let filtered = [...journeys];
+
+    if (activeFilters.size > 0) {
+      filtered = journeys.filter(journey => {
+        // Check each active filter
+        for (const filterKey of activeFilters) {
+          const [filterId, optionId] = filterKey.split(':');
+          
+          // Single option filters
+          if (filterId === 'stoppage' && journey.alert_type === 'long_stoppage') {
+            return true;
+          }
+          if (filterId === 'deviation' && journey.alert_type === 'route_deviation') {
+            return true;
+          }
+          
+          // Multi-option filters
+          if (filterId === 'delayed') {
+            if (journey.sla_status === 'delayed') {
+              // Check specific delay ranges if option is selected
+              if (optionId === '0-6hrs' || optionId === '6-12hrs' || optionId === '12plus') {
+                // For demo, if delayed, show it (in real app, check actual delay hours)
+                return true;
+              }
+              // If no specific option, show all delayed
+              if (!optionId) return true;
+            }
+          }
+          
+          if (filterId === 'eway') {
+            // E Way bill filters - for demo, show all if selected
+            return true;
+          }
+          
+          if (filterId === 'eta') {
+            // ETA filters - for demo, show all if selected
+            return true;
+          }
+        }
+        return false;
+      });
+    }
+
+    setFilteredJourneys(filtered);
+  }, [journeys, activeFilters]);
+
+  // Quick Filters - Single and Multi-option filters - using dynamic counts
+  const quickFilters = [
+    // Single option filters
+    { id: 'stoppage', label: 'Long Stoppage', count: calculateFilterCounts.stoppage, type: 'alert' as const },
+    { id: 'deviation', label: 'Route Deviation', count: calculateFilterCounts.deviation, type: 'alert' as const },
+    // Multi-option filter: Delayed
+    {
+      id: 'delayed',
+      label: 'Delayed',
+      count: calculateFilterCounts.delayed,
+      type: 'normal' as const,
+      options: [
+        { id: '0-6hrs', label: '0-6 hrs', count: calculateFilterCounts['0-6hrs'], type: 'warning' as const },
+        { id: '6-12hrs', label: '6-12 hrs', count: calculateFilterCounts['6-12hrs'], type: 'warning' as const },
+        { id: '12plus', label: '12+ hrs', count: calculateFilterCounts['12plus'], type: 'alert' as const }
+      ]
     },
-    { 
-      label: 'Planning', 
-      icon: 'calendar', 
-      badge: journeyCounts['planned'] ? String(journeyCounts['planned']) : undefined 
+    // Multi-option filter: E Way bill
+    {
+      id: 'eway',
+      label: 'E Way bill',
+      type: 'normal' as const,
+      options: [
+        { id: 'expiring', label: 'Expiring in 3 hrs', count: calculateFilterCounts.expiring, type: 'warning' as const },
+        { id: 'expired', label: 'Expired', count: calculateFilterCounts.expired, type: 'alert' as const }
+      ]
     },
-    { 
-      label: 'In Transit', 
-      icon: 'truck', 
-      badge: journeyCounts['in_transit'] ? String(journeyCounts['in_transit']) : undefined 
+    // Multi-option filter: ETA
+    {
+      id: 'eta',
+      label: 'ETA',
+      type: 'normal' as const,
+      options: [
+        { id: '6hrs', label: '6 hrs', count: calculateFilterCounts['6hrs'], type: 'success' as const },
+        { id: '12hrs', label: '12 hrs', count: calculateFilterCounts['12hrs'], type: 'success' as const },
+        { id: '24plus', label: '24+ hrs', count: calculateFilterCounts['24plus'], type: 'alert' as const }
+      ]
+    }
+  ];
+
+  // Table columns
+  const columns: TableColumn<Journey>[] = [
+    {
+      key: 'select',
+      title: '',
+      width: '48px',
+      render: (_: any, record: Journey) => (
+        <Checkbox
+          checked={selectedJourneyIds.includes(record.journey_id)}
+          onChange={(event) => {
+            setSelectedJourneyIds((prev) => {
+              if (event.target.checked) {
+                return Array.from(new Set([...prev, record.journey_id]));
+              }
+              return prev.filter((id) => id !== record.journey_id);
+            });
+          }}
+        />
+      )
     },
-    { 
-      label: 'Completed', 
-      icon: 'check-circle', 
-      badge: journeyCounts['delivered'] ? String(journeyCounts['delivered']) : undefined 
+    {
+      key: 'feed_unique_id',
+      title: 'Feed Unique ID',
+      width: '180px',
+      render: (_: any, record: Journey) => (
+        <>
+          <div>{record.feed_unique_id}</div>
+          <Button variant="link">View ID's</Button>
+        </>
+      )
     },
-    { 
-      label: 'Invoiced', 
-      icon: 'file-text', 
-      badge: journeyCounts['delivered'] ? String(journeyCounts['delivered']) : undefined 
+    {
+      key: 'from',
+      title: 'From',
+      width: '200px',
+      render: (_: any, record: Journey) => (
+        <>
+          <div>
+            <span>{record.origin_display}</span>
+            <Badge variant="normal">+1P</Badge>
+          </div>
+          <div>{record.origin_company_display}</div>
+        </>
+      )
     },
+    {
+      key: 'to',
+      title: 'To',
+      width: '200px',
+      render: (_: any, record: Journey) => (
+        <>
+          <div>
+            <span>{record.destination_display}</span>
+            <Badge variant="normal">+3D</Badge>
+          </div>
+          <div>{record.destination_company_display}</div>
+        </>
+      )
+    },
+    {
+      key: 'vehicle',
+      title: 'Vehicle Info',
+      width: '180px',
+      render: (_: any, record: Journey) => (
+        <>
+          <div>{record.vehicle_number}</div>
+          <div>{record.transporter_name}</div>
+        </>
+      )
+    },
+    {
+      key: 'trip',
+      title: 'Trip Info',
+      width: '180px',
+      render: (_: any, record: Journey) => {
+        const getTripIcon = (type: string) => {
+          if (type === 'SIM') {
+            return <div style={{ width: '16px', height: '16px', borderRadius: '50%', background: '#52c41a', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <div style={{ width: '8px', height: '8px', background: 'white', borderRadius: '50%' }} />
+            </div>;
+          }
+          if (type === 'GPS') {
+            return <MapPin style={{ width: '16px', height: '16px', color: '#1890ff' }} />;
+          }
+          if (type === 'Fastag') {
+            return <div style={{ width: '16px', height: '16px', borderRadius: '2px', background: '#722ed1', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '10px', color: 'white', fontWeight: 600 }}>F</div>;
+          }
+          return null;
+        };
+        
+        return (
+          <>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+              {getTripIcon(record.trip_type_display)}
+              <span>{record.trip_type_display}</span>
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+              <CheckCircle2 style={{ width: '14px', height: '14px', color: '#52c41a' }} />
+              <span>{record.trip_id}</span>
+            </div>
+          </>
+        );
+      }
+    },
+    {
+      key: 'status',
+      title: 'Status',
+      width: '180px',
+      render: (_: any, record: Journey) => (
+        <>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <MapPin style={{ width: '14px', height: '14px', color: 'var(--secondary)' }} />
+            <span>{record.status_display}</span>
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <MapPin style={{ width: '14px', height: '14px', color: 'var(--secondary)' }} />
+            <span>{record.current_location_display}</span>
+          </div>
+        </>
+      )
+    },
+    {
+      key: 'sla',
+      title: 'SLA',
+      width: '160px',
+      render: (_: any, record: Journey) => (
+        <>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+            {record.sla_status === 'on_time' ? (
+              <CheckCircle2 style={{ width: '16px', height: '16px', color: '#52c41a' }} />
+            ) : (
+              <Clock style={{ width: '16px', height: '16px', color: '#ff4d4f' }} />
+            )}
+            <span style={{ color: record.sla_status === 'on_time' ? '#52c41a' : '#ff4d4f' }}>
+              {record.sla_status_display}
+            </span>
+          </div>
+          <div>{record.eta_display}</div>
+        </>
+      )
+    },
+    {
+      key: 'alerts',
+      title: 'Alerts',
+      width: '160px',
+      render: (_: any, record: Journey) => {
+        if (!record.alert_type) return null;
+        
+        const alertLabels: Record<string, string> = {
+          long_stoppage: 'Long Stoppage',
+          route_deviation: 'Route Deviation',
+          transit_delay: 'Transit Delay'
+        };
+        
+        return (
+          <>
+            <Badge variant="danger">
+              {alertLabels[record.alert_type] || record.alert_type}
+            </Badge>
+            <div>{record.alert_time_display || '1 hour ago'}</div>
+          </>
+        );
+      }
+    },
+    {
+      key: 'actions',
+      title: 'Actions',
+      width: '100px',
+      render: () => (
+        <>
+          <Button variant="text" icon="more" />
+          <Button variant="text" icon="arrow-right" />
+        </>
+      )
+    }
   ];
 
   return (
-    <div className="min-h-screen" style={{ backgroundColor: 'var(--bg-secondary)' }}>
-      {/* Header */}
-      <div 
-        className="border-b"
-        style={{ 
-          borderColor: 'var(--border-primary)',
-          backgroundColor: 'var(--bg-primary)'
-        }}
-      >
-        <div style={{ 
-          maxWidth: '1440px',
-          margin: '0 auto',
-          padding: 'var(--space-6) var(--space-5)'
-        }}>
-          {/* Breadcrumb */}
-          <div style={{ marginBottom: 'var(--space-4)' }}>
-            <nav style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2)' }}>
-              <a 
-                href="#" 
-                style={{ 
-                  color: 'var(--secondary)', 
-                  fontSize: 'var(--font-size-sm)',
-                  textDecoration: 'none'
-                }}
-              >
-                Home
-              </a>
-              <span style={{ color: 'var(--tertiary)' }}>/</span>
-              <span style={{ 
-                color: 'var(--primary)', 
-                fontSize: 'var(--font-size-sm)',
-                fontWeight: 'var(--font-weight-medium)'
-              }}>
-                My Journeys
-              </span>
-            </nav>
+    <div style={{ backgroundColor: 'var(--bg-secondary)', minHeight: '100vh' }}>
+      <AppHeader onOpenNavigation={onOpenNavigation} />
+      
+      <div style={{ backgroundColor: 'var(--bg-primary)', padding: 'var(--space-5)' }}>
+        {/* Title Bar */}
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 'var(--space-5)' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-3)' }}>
+            <Home style={{ width: '28px', height: '28px', color: 'var(--primary)' }} />
+            <h1 style={{ margin: 0, fontSize: 'var(--font-size-xl)', fontWeight: 600, color: 'var(--primary)' }}>My Journeys</h1>
           </div>
           
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-2)' }}>
-              <h1 style={{ 
-                fontSize: 'var(--font-size-xxl)',
-                fontWeight: 'var(--font-weight-semibold)',
-                color: 'var(--primary)'
-              }}>
-                My Journeys
-              </h1>
-              <p style={{ 
-                color: 'var(--secondary)',
-                fontSize: 'var(--font-size-md)'
-              }}>
-                Track and manage your freight journeys from planning to invoicing
-              </p>
-            </div>
-            <Button 
-              variant="primary"
-              icon="plus"
-              className="bg-[var(--button-primary-bg)] text-[var(--button-primary-text)] rounded-lg px-5 py-3"
-              style={{
-                backgroundColor: 'var(--button-primary-bg)',
-                color: 'var(--button-primary-text)',
-                borderRadius: 'var(--radius-md)'
-              }}
-            >
-              Create Journey
-            </Button>
+          {/* Filter Bar */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-3)' }}>
+            <Dropdown
+              options={[
+                { value: 'mdc-labs', label: 'MDC Labs, Amritsar' },
+                { value: 'all', label: 'All Companies' }
+              ]}
+              placeholder="Select company"
+              defaultValue="mdc-labs"
+            />
+            
+            <DatePicker
+              placeholder="12 Aug, 2024 → 12 Sep 2024"
+            />
+            
+            <Dropdown
+              options={[
+                { value: 'outbound', label: 'Outbound - Source' },
+                { value: 'inbound', label: 'Inbound' }
+              ]}
+              placeholder="Direction"
+              defaultValue="outbound"
+            />
+            
+            <Input
+              placeholder="Search My Journeys"
+              leadingIcon="search"
+              value={searchTerm}
+              onChange={(event: React.ChangeEvent<HTMLInputElement>) => setSearchTerm(event.target.value)}
+            />
+            
+            <Button variant="primary" icon="calendar">Add Journey</Button>
           </div>
+            </div>
+
+        {/* Tabs + View Toggle */}
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 'var(--space-4)' }}>
+          <Tabs tabs={tabs} activeTab={selectedTab} onChange={(index: number) => setSelectedTab(index)} />
+          
+          <div style={{ display: 'flex', alignItems: 'center', gap: '4px', backgroundColor: 'var(--bg-secondary)', borderRadius: 'var(--radius-md)', padding: '4px' }}>
+            <Button
+              variant={viewMode === 'list' ? 'secondary' : 'text'}
+              style={{ width: '32px', height: '32px', padding: 0 }}
+              onClick={() => setViewMode('list')}
+            >
+              <LayoutList style={{ width: '16px', height: '16px' }} />
+            </Button>
+            <Button 
+              variant={viewMode === 'map' ? 'secondary' : 'text'}
+              style={{ width: '32px', height: '32px', padding: 0 }}
+              onClick={() => setViewMode('map')}
+            >
+              <Map style={{ width: '16px', height: '16px' }} />
+            </Button>
         </div>
       </div>
 
-      {/* Main Content */}
-      <div style={{ 
-        maxWidth: '1440px',
-        margin: '0 auto',
-        padding: 'var(--space-8) var(--space-5)'
-      }}>
-        <Tabs 
-          tabs={journeyTabs}
-          className="w-full"
-          onTabChange={(index) => {
-            const tabKeys = ['all', 'planning', 'in_transit', 'completed', 'invoiced'];
-            setSelectedTab(tabKeys[index] || 'all');
-          }}
-        />
-
-        {/* Loading State */}
-        {loading && (
-          <div 
-            style={{
-              marginTop: 'var(--space-6)',
-              backgroundColor: 'var(--bg-primary)',
-              border: '1px solid var(--border-primary)',
-              borderRadius: 'var(--radius-md)',
-              padding: 'var(--space-16)',
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              justifyContent: 'center',
-              textAlign: 'center'
+        {/* Quick Filters - Single and Multi-option */}
+        <div className="quick-filter-scroll">
+          <QuickFilters 
+            className="quick-filter-row"
+            filters={quickFilters.map(filter => ({
+              ...filter,
+              selected: activeFilters.has(filter.id),
+              selectedOption: Array.from(activeFilters)
+                .find(f => f.startsWith(`${filter.id}:`))?.split(':')[1]
+            }))}
+            onFilterClick={(filterId, optionId) => {
+              const filterKey = optionId ? `${filterId}:${optionId}` : filterId;
+              setActiveFilters(prev => {
+                const next = new Set(prev);
+                if (next.has(filterKey)) {
+                  next.delete(filterKey);
+                } else {
+                  next.add(filterKey);
+                }
+                return next;
+              });
             }}
-          >
-            <p style={{ color: 'var(--secondary)', fontSize: 'var(--font-size-md)' }}>
-              Loading journeys...
-            </p>
-          </div>
-        )}
-
-        {/* Error State */}
-        {error && !loading && (
-          <div 
-            style={{
-              marginTop: 'var(--space-6)',
-              backgroundColor: 'var(--bg-primary)',
-              border: '1px solid var(--critical)',
-              borderRadius: 'var(--radius-md)',
-              padding: 'var(--space-6)',
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              justifyContent: 'center',
-              textAlign: 'center'
+            onFilterRemove={(filterId, optionId) => {
+              const filterKey = optionId ? `${filterId}:${optionId}` : filterId;
+              setActiveFilters(prev => {
+                const next = new Set(prev);
+                next.delete(filterKey);
+                return next;
+              });
             }}
-          >
-            <p style={{ color: 'var(--critical)', fontSize: 'var(--font-size-md)', marginBottom: 'var(--space-4)' }}>
-              {error}
-            </p>
-            <Button 
-              variant="primary"
-              onClick={() => {
-                setSelectedTab('all');
-                setError(null);
-              }}
-            >
-              Retry
-            </Button>
-          </div>
-        )}
+          />
+        </div>
 
-        {/* Journeys List */}
-        {!loading && !error && journeys.length > 0 && (
-          <div style={{ marginTop: 'var(--space-6)' }}>
-            <div style={{ 
-              marginBottom: 'var(--space-4)',
-              padding: 'var(--space-3)',
-              backgroundColor: 'var(--bg-primary)',
-              borderRadius: 'var(--radius-md)'
-            }}>
-              <p style={{ 
-                color: 'var(--secondary)', 
-                fontSize: 'var(--font-size-sm)' 
-              }}>
-                {totalCount} {totalCount === 1 ? 'Journey' : 'Journeys'} available
-              </p>
-            </div>
-            
-            <div style={{
-              backgroundColor: 'var(--bg-primary)',
-              border: '1px solid var(--border-primary)',
-              borderRadius: 'var(--radius-md)',
-              overflow: 'hidden'
-            }}>
-              {journeys.map((journey) => (
-                <div 
-                  key={journey.journey_id}
-                  style={{
-                    padding: 'var(--space-4)',
-                    borderBottom: '1px solid var(--border-secondary)',
-                    display: 'grid',
-                    gridTemplateColumns: '1fr 2fr 2fr 2fr 1.5fr 1.5fr 1.5fr 1.5fr 1fr',
-                    gap: 'var(--space-4)',
-                    alignItems: 'center'
-                  }}
-                >
-                  <div style={{ fontSize: 'var(--font-size-sm)', color: 'var(--primary)' }}>
-                    {journey.feed_unique_id || journey.journey_id}
-                  </div>
-                  <div>
-                    <div style={{ fontSize: 'var(--font-size-sm)', color: 'var(--primary)', fontWeight: 'var(--font-weight-medium)' }}>
-                      {journey.origin_display}
-                    </div>
-                    <div style={{ fontSize: 'var(--font-size-xs)', color: 'var(--secondary)' }}>
-                      {journey.origin_company_display}
-                    </div>
-                  </div>
-                  <div>
-                    <div style={{ fontSize: 'var(--font-size-sm)', color: 'var(--primary)', fontWeight: 'var(--font-weight-medium)' }}>
-                      {journey.destination_display}
-                    </div>
-                    <div style={{ fontSize: 'var(--font-size-xs)', color: 'var(--secondary)' }}>
-                      {journey.destination_company_display}
-                    </div>
-                  </div>
-                  <div>
-                    <div style={{ fontSize: 'var(--font-size-sm)', color: 'var(--primary)' }}>
-                      {journey.vehicle_number}
-                    </div>
-                    <div style={{ fontSize: 'var(--font-size-xs)', color: 'var(--secondary)' }}>
-                      {journey.transporter_name}
-                    </div>
-                  </div>
-                  <div>
-                    <div style={{ fontSize: 'var(--font-size-sm)', color: 'var(--primary)' }}>
-                      {journey.trip_type_display}
-                    </div>
-                    <div style={{ fontSize: 'var(--font-size-xs)', color: 'var(--positive)' }}>
-                      {journey.trip_id}
-                    </div>
-                  </div>
-                  <div>
-                    <div style={{ fontSize: 'var(--font-size-sm)', color: 'var(--primary)' }}>
-                      {journey.status_display}
-                    </div>
-                    <div style={{ fontSize: 'var(--font-size-xs)', color: 'var(--secondary)' }}>
-                      {journey.current_location_display}
-                    </div>
-                  </div>
-                  <div>
-                    <div style={{ 
-                      fontSize: 'var(--font-size-sm)', 
-                      color: journey.sla_status === 'on_time' ? 'var(--positive)' : 'var(--critical)',
-                      fontWeight: 'var(--font-weight-medium)'
-                    }}>
-                      {journey.sla_status_display}
-                    </div>
-                    <div style={{ fontSize: 'var(--font-size-xs)', color: 'var(--secondary)' }}>
-                      {journey.eta_display}
-                    </div>
-                  </div>
-                  <div>
-                    {journey.alert_type && (
-                      <div style={{
-                        display: 'inline-block',
-                        padding: '2px 6px',
-                        borderRadius: 'var(--radius-sm)',
-                        backgroundColor: 'var(--critical-light)',
-                        fontSize: 'var(--font-size-xs)',
-                        color: 'var(--critical)',
-                        fontWeight: 'var(--font-weight-medium)',
-                        marginBottom: 'var(--space-1)'
-                      }}>
-                        {journey.alert_type.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}
-                      </div>
-                    )}
-                    {journey.alert_time_display && (
-                      <div style={{ fontSize: 'var(--font-size-xs)', color: 'var(--secondary)' }}>
-                        {journey.alert_time_display}
-                      </div>
-                    )}
-                  </div>
-                  <div style={{ display: 'flex', gap: 'var(--space-2)' }}>
-                    <button style={{ 
-                      padding: 'var(--space-2)', 
-                      border: 'none', 
-                      background: 'transparent', 
-                      cursor: 'pointer' 
-                    }}>
-                      •••
-                    </button>
-                    <button style={{ 
-                      padding: 'var(--space-2)', 
-                      border: 'none', 
-                      background: 'transparent', 
-                      cursor: 'pointer' 
-                    }}>
-                      →
-                    </button>
-                  </div>
-                </div>
-              ))}
-            </div>
+        {/* Actions Row */}
+        <div style={{ 
+          display: 'flex', 
+          justifyContent: 'space-between', 
+          alignItems: 'center', 
+          marginTop: 'var(--space-4)', 
+          marginBottom: 'var(--space-4)',
+          padding: 'var(--space-3) var(--space-4)',
+          backgroundColor: 'var(--bg-primary)',
+          borderRadius: 'var(--radius-md)'
+        }}>
+          <div style={{ color: 'var(--secondary)', fontSize: 'var(--font-size-sm)' }}>
+            {selectedJourneyIds.length > 0 ? `${selectedJourneyIds.length} journeys selected · ` : ''}
+            {activeFilters.size > 0 ? filteredJourneys.length : journeys.length} journeys available
           </div>
-        )}
-
-        {/* Empty State */}
-        {!loading && !error && journeys.length === 0 && (
-          <div 
-            style={{
-              marginTop: 'var(--space-6)',
-              backgroundColor: 'var(--bg-primary)',
-              border: '1px solid var(--border-primary)',
-              borderRadius: 'var(--radius-md)',
-              padding: 'var(--space-16)',
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              justifyContent: 'center',
-              textAlign: 'center'
-            }}
-          >
-            <div style={{ 
-              width: '64px', 
-              height: '64px', 
-              marginBottom: 'var(--space-4)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center'
-            }}>
-              <svg 
-                width="64" 
-                height="64" 
-                viewBox="0 0 24 24" 
-                fill="none" 
-                stroke="var(--tertiary)" 
-                strokeWidth="1.5"
-              >
-                <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" />
-                <polyline points="3.29 7 12 12 20.71 7" />
-                <line x1="12" y1="22" x2="12" y2="12" />
+          
+          <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2)' }}>
+            <Button variant="text" style={{ width: '40px', height: '40px', padding: 0 }}>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
               </svg>
-            </div>
-            <h3 style={{ 
-              fontSize: 'var(--font-size-lg)',
-              fontWeight: 'var(--font-weight-semibold)',
-              color: 'var(--primary)',
-              marginBottom: 'var(--space-2)'
-            }}>
-              No journeys yet
-            </h3>
-            <p style={{ 
-              color: 'var(--secondary)',
-              fontSize: 'var(--font-size-md)',
-              maxWidth: '400px',
-              marginBottom: 'var(--space-6)'
-            }}>
-              Get started by creating your first freight journey. Track shipments from planning through invoicing.
-            </p>
-            <Button 
-              variant="primary"
-              icon="plus"
-              className="bg-[var(--button-primary-bg)] text-[var(--button-primary-text)] rounded-lg px-5 py-3"
-              style={{
-                backgroundColor: 'var(--button-primary-bg)',
-                color: 'var(--button-primary-text)',
-                borderRadius: 'var(--radius-md)'
-              }}
-            >
-              Create Your First Journey
             </Button>
+            <Button variant="text" style={{ width: '40px', height: '40px', padding: 0 }}>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M9 11l3 3L22 4" />
+                <path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11" />
+              </svg>
+            </Button>
+            <Button variant="text" style={{ width: '40px', height: '40px', padding: 0 }}>
+              <Filter style={{ width: '20px', height: '20px' }} />
+            </Button>
+            <Button variant="text" style={{ width: '40px', height: '40px', padding: 0 }}>
+              <LayoutList style={{ width: '20px', height: '20px' }} />
+            </Button>
+            <Button variant="text" style={{ width: '40px', height: '40px', padding: 0 }}>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <rect x="3" y="3" width="7" height="7" />
+                <rect x="14" y="3" width="7" height="7" />
+                <rect x="14" y="14" width="7" height="7" />
+                <rect x="3" y="14" width="7" height="7" />
+              </svg>
+            </Button>
+            <div style={{ 
+              display: 'flex', 
+              alignItems: 'center', 
+              gap: 'var(--space-2)',
+            backgroundColor: 'var(--bg-primary)',
+            border: '1px solid var(--border-primary)',
+            borderRadius: 'var(--radius-md)',
+              padding: 'var(--space-1) var(--space-2)'
+            }}>
+              <Button
+                variant="text"
+                style={{ width: '24px', height: '24px', padding: 0 }}
+                onClick={() => setPage((prev) => Math.max(1, prev - 1))}
+              >
+                <ChevronLeft style={{ width: '16px', height: '16px' }} />
+              </Button>
+              <span style={{ fontSize: 'var(--font-size-sm)', color: 'var(--primary)', minWidth: '20px', textAlign: 'center' }}>
+                {page}
+              </span>
+              <Button 
+                variant="text"
+                style={{ width: '24px', height: '24px', padding: 0 }}
+                onClick={() => setPage((prev) => prev + 1)}
+              >
+                <ChevronRight style={{ width: '16px', height: '16px' }} />
+              </Button>
+            </div>
           </div>
-        )}
+        </div>
+
+                {/* Table */}
+                <Table columns={columns} data={activeFilters.size > 0 ? filteredJourneys : journeys} />
       </div>
     </div>
   );
