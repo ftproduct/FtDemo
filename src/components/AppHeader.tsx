@@ -1,11 +1,11 @@
+import React from 'react';
+import { UserProfile, UserProfileDropdown } from 'ft-design-system/ai';
 import svgPaths from "../imports/svg-0p0qopiq1k";
-import imgCompanyLogos from "figma:asset/eb5617c1fb8c4f18cf1db67cafb34a6e0fe3d26c.png";
-import imgUserImage from "figma:asset/0c12b272f4ee3a49b56adf99c21f0cc746e805cb.png";
 
 function Menu() {
   return (
-    <div className="relative shrink-0 size-[24px]" data-name="Menu">
-      <svg className="block" style={{ width: '24px', height: '24px' }} fill="none" preserveAspectRatio="none" viewBox="0 0 24 24">
+    <div className="relative shrink-0" data-name="Menu" style={{ width: '28px', height: '28px' }}>
+      <svg className="block" style={{ width: '28px', height: '28px' }} fill="none" preserveAspectRatio="none" viewBox="0 0 24 24">
         <g id="Menu">
           <g id="Vector">
             <path d={svgPaths.p1cfa1bc0} stroke="var(--primary)" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" />
@@ -29,14 +29,18 @@ function LucideLayoutGrid({ onOpenNavigation }: { onOpenNavigation?: () => void 
       data-name="lucide/layout-grid"
       style={{
         backgroundColor: 'var(--bg-primary)',
-        gap: 'var(--space-3)',
-        padding: 'var(--space-4)',
         borderRadius: 'var(--radius-full)',
         border: '1px solid var(--border-primary)',
-        cursor: 'pointer'
+        cursor: 'pointer',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: 0
       }}
     >
-      <Menu />
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', height: '100%' }}>
+        <Menu />
+      </div>
     </button>
   );
 }
@@ -123,78 +127,68 @@ function NotificationContainer() {
   );
 }
 
-function CompanyLogos() {
-  return (
-    <div className="h-full relative shrink-0 w-[155px]" data-name="Company logos">
-      <img alt="Company Logo" className="absolute inset-0 max-w-none object-50%-50% object-contain pointer-events-none size-full" src={imgCompanyLogos} />
-    </div>
-  );
-}
-
-function UserAvatar() {
-  return (
-    <div 
-      className="overflow-hidden relative shrink-0 size-[30px]" 
-      data-name="User Avatar"
-      style={{
-        backgroundColor: 'var(--bg-primary)',
-        borderRadius: 'var(--radius-full)',
-        border: '1px solid var(--border-primary)'
-      }}
-    >
-      <img 
-        alt="User Avatar" 
-        src={imgUserImage} 
-        style={{
-          width: '100%',
-          height: '100%',
-          objectFit: 'cover',
-          borderRadius: 'var(--radius-full)'
-        }}
-      />
-    </div>
-  );
-}
-
-function Avatar() {
-  return (
-    <div 
-      className="content-stretch flex items-center justify-center relative shrink-0 size-[30px]" 
-      data-name="Avatar"
-      style={{ gap: 'var(--space-3)' }}
-    >
-      <UserAvatar />
-    </div>
-  );
-}
-
-function UserProfile() {
-  return (
-    <div 
-      className="box-border content-stretch flex items-center h-[46px] relative shrink-0" 
-      data-name="User Profile"
-      style={{
-        backgroundColor: 'var(--bg-primary)',
-        gap: 'var(--space-4)',
-        padding: 'var(--space-2)',
-        borderRadius: 'var(--radius-md)'
-      }}
-    >
-      <CompanyLogos />
-      <Avatar />
-    </div>
-  );
-}
 
 function NotificationIcons() {
+  const [isUserProfileOpen, setIsUserProfileOpen] = React.useState(false);
+  const profileRef = React.useRef<HTMLDivElement | null>(null);
+
+  React.useEffect(() => {
+    if (!isUserProfileOpen) return;
+
+    const handleClickOutside = (event: MouseEvent) => {
+      if (profileRef.current && !profileRef.current.contains(event.target as Node)) {
+        setIsUserProfileOpen(false);
+      }
+    };
+
+    const handleEsc = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setIsUserProfileOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener('keydown', handleEsc);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('keydown', handleEsc);
+    };
+  }, [isUserProfileOpen]);
+
   return (
     <div 
+      ref={profileRef}
       className="content-stretch flex items-center relative shrink-0" 
       data-name="Notification Icons"
-      style={{ gap: 'var(--space-4)' }}
+      style={{ gap: 'var(--space-4)', overflow: 'visible', zIndex: 1200 }}
     >
       <NotificationContainer />
-      <UserProfile />
+      <div style={{ position: 'relative' }}>
+        <UserProfile 
+          userName="John Doe"
+          userRole="Administrator"
+          userLocation="Mumbai, India"
+          company={{
+            name: 'ft',
+            displayName: 'Freight Tiger'
+          }}
+          onClick={() => setIsUserProfileOpen((prev) => !prev)}
+        />
+        <UserProfileDropdown 
+          userName="John Doe"
+          userRole="Administrator"
+          userLocation="Mumbai, India"
+          userBadge="Admin"
+          isOpen={isUserProfileOpen}
+          onMenuItemClick={(item) => {
+            console.log('Menu item clicked:', item);
+            if (item === 'logout') {
+              // Handle logout
+            }
+            setIsUserProfileOpen(false);
+          }}
+        />
+      </div>
     </div>
   );
 }
@@ -208,21 +202,22 @@ export default function AppHeader({ onOpenNavigation }: AppHeaderProps) {
     <div 
       className="relative size-full" 
       data-name="App header"
-      style={{ backgroundColor: 'var(--bg-secondary)' }}
+      style={{ backgroundColor: 'var(--bg-secondary)', overflow: 'visible', zIndex: 100 }}
     >
       <div 
         aria-hidden="true" 
         className="absolute inset-0 pointer-events-none border-solid border-[0px_0px_1px]"
         style={{ borderColor: 'var(--border-primary)' }}
       />
-      <div className="flex flex-row items-center size-full">
+      <div className="flex flex-row items-center size-full" style={{ overflow: 'visible' }}>
         <div 
           className="box-border content-stretch flex items-center justify-between relative size-full"
           style={{
             paddingLeft: 'var(--space-5)',
             paddingRight: 'var(--space-5)',
             paddingTop: 'var(--space-3)',
-            paddingBottom: 'var(--space-3)'
+            paddingBottom: 'var(--space-3)',
+            overflow: 'visible'
           }}
         >
           <Logo onOpenNavigation={onOpenNavigation} />

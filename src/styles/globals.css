@@ -33,7 +33,7 @@
 }
 
 html {
-  font-size: 14px; /* Base font size - scales all rem units */
+  font-size: 14px; /* Base font size for screens < 1440px - scales all rem units */
   line-height: 1.4;
   -webkit-text-size-adjust: 100%;
   -ms-text-size-adjust: 100%;
@@ -507,8 +507,15 @@ p, h1, h2, h3, h4, h5, h6 {
    RESPONSIVE TYPOGRAPHY
    ===================================================== */
 
-/* Tablet Breakpoint (800px - 1440px) */
-@media (max-width: 1440px) and (min-width: 800px) {
+/* Desktop Breakpoint (>= 1440px) - rem = 16px */
+@media (min-width: 1440px) {
+  html {
+    font-size: 16px; /* Base rem value for large screens */
+  }
+}
+
+/* Tablet Breakpoint (800px - 1439px) - rem = 14px (default) */
+@media (max-width: 1439px) and (min-width: 800px) {
   :root {
     --font-size-xs: 11px;
     --font-size-sm: 12px;
@@ -519,7 +526,7 @@ p, h1, h2, h3, h4, h5, h6 {
   }
 }
 
-/* Mobile Breakpoint (<800px) */
+/* Mobile Breakpoint (<800px) - rem = 12px */
 @media (max-width: 799px) {
   html {
     font-size: 12px; /* Smaller base size for mobile */
@@ -653,6 +660,33 @@ p, h1, h2, h3, h4, h5, h6 {
 .quick-filter-row {
   flex-wrap: nowrap !important;
   min-width: max-content;
+}
+
+/* User Profile Dropdown Z-Index */
+.user-profile-dropdown {
+  position: relative;
+  z-index: 1001;
+}
+
+/* Target Radix UI dropdown portal and content - highest priority */
+[data-radix-popper-content-wrapper],
+[data-radix-portal],
+[data-radix-dropdown-content] {
+  z-index: 9999 !important;
+}
+
+/* Target the dropdown menu content directly */
+.user-profile-dropdown [role="menu"],
+.user-profile-dropdown > div > div:last-child,
+div[class*="bg-\[var\(--bg-primary"]:has([role="menu"]),
+div[class*="shadow-\[-6px"] {
+  z-index: 9999 !important;
+}
+
+/* Ensure dropdown content appears above header - target all possible dropdown containers */
+body > [data-radix-popper-content-wrapper],
+body > [data-radix-portal] {
+  z-index: 9999 !important;
 }
 
 /* =====================================================

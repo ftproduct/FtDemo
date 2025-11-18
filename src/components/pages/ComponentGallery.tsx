@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Badge, Table, ProgressBar, Tabs, Checkbox, RadioGroup, Switch, Button, Input, Card, Statistic, Text, SubText, DisplayBlock, NavigationMenu, QuickFilters, Dropdown, DatePicker, AppHeader, Footer, UserProfile, Collapsible, UploadZone, FileCard, FileThumbnail, FileTypeIcon, Steps, RadioSelector, SegmentedTabs, Typography, ButtonGroup } from 'ft-design-system/ai';
+import { Badge, Table, ProgressBar, Tabs, Checkbox, RadioGroup, Switch, Button, Input, Card, Statistic, Text, SubText, DisplayBlock, NavigationMenu, QuickFilters, Dropdown, DatePicker, AppHeader, Footer, UserProfile, Collapsible, UploadZone, FileCard, FileThumbnail, FileTypeIcon, Steps, RadioSelector, SegmentedTabs, Typography, ButtonGroup, Spacer, Divider, UserProfileDropdown, ListingLayout } from 'ft-design-system/ai';
 import { MissingComponent } from '../MissingComponent';
 import { Clock } from 'lucide-react';
 
@@ -1084,6 +1084,122 @@ const data = [
         </div>
       ),
       code: `<Typography>Default typography text</Typography>`
+    },
+    {
+      name: 'Spacer',
+      description: 'Spacing component for consistent vertical or horizontal spacing',
+      demo: (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-4)', width: '100%' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-2)' }}>
+            <p style={{ fontSize: 'var(--font-size-sm)', color: 'var(--secondary)', fontWeight: 'var(--font-weight-medium)' }}>Vertical Spacers</p>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2)' }}>
+              <div style={{ width: '40px', height: '40px', backgroundColor: 'var(--primary)', borderRadius: 'var(--radius-sm)' }} />
+              <Spacer size="x2" />
+              <div style={{ width: '40px', height: '40px', backgroundColor: 'var(--primary)', borderRadius: 'var(--radius-sm)' }} />
+              <Spacer size="x4" />
+              <div style={{ width: '40px', height: '40px', backgroundColor: 'var(--primary)', borderRadius: 'var(--radius-sm)' }} />
+              <Spacer size="x6" />
+              <div style={{ width: '40px', height: '40px', backgroundColor: 'var(--primary)', borderRadius: 'var(--radius-sm)' }} />
+            </div>
+          </div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-2)' }}>
+            <p style={{ fontSize: 'var(--font-size-sm)', color: 'var(--secondary)', fontWeight: 'var(--font-weight-medium)' }}>Horizontal Spacers</p>
+            <div style={{ display: 'flex', alignItems: 'center' }}>
+              <div style={{ width: '40px', height: '40px', backgroundColor: 'var(--primary)', borderRadius: 'var(--radius-sm)' }} />
+              <Spacer size="x2" horizontal />
+              <div style={{ width: '40px', height: '40px', backgroundColor: 'var(--primary)', borderRadius: 'var(--radius-sm)' }} />
+              <Spacer size="x4" horizontal />
+              <div style={{ width: '40px', height: '40px', backgroundColor: 'var(--primary)', borderRadius: 'var(--radius-sm)' }} />
+              <Spacer size="x6" horizontal />
+              <div style={{ width: '40px', height: '40px', backgroundColor: 'var(--primary)', borderRadius: 'var(--radius-sm)' }} />
+            </div>
+          </div>
+        </div>
+      ),
+      code: `{/* Vertical spacer */}
+<Spacer size="x2" />
+<Spacer size="x4" />
+<Spacer size="x6" />
+
+{/* Horizontal spacer */}
+<Spacer size="x2" horizontal />
+<Spacer size="x4" horizontal />`
+    },
+    {
+      name: 'Divider',
+      description: 'Visual divider component for separating content sections',
+      demo: (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-6)', width: '100%' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-2)' }}>
+            <p style={{ fontSize: 'var(--font-size-sm)', color: 'var(--secondary)', fontWeight: 'var(--font-weight-medium)' }}>Primary Divider</p>
+            <Divider type="primary" />
+          </div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-2)' }}>
+            <p style={{ fontSize: 'var(--font-size-sm)', color: 'var(--secondary)', fontWeight: 'var(--font-weight-medium)' }}>Secondary Divider</p>
+            <Divider type="secondary" />
+          </div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-2)' }}>
+            <p style={{ fontSize: 'var(--font-size-sm)', color: 'var(--secondary)', fontWeight: 'var(--font-weight-medium)' }}>Tertiary Divider</p>
+            <Divider type="tertiary" />
+          </div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-2)' }}>
+            <p style={{ fontSize: 'var(--font-size-sm)', color: 'var(--secondary)', fontWeight: 'var(--font-weight-medium)' }}>Divider with Label</p>
+            <Divider type="with-label" label="Section Title" />
+          </div>
+        </div>
+      ),
+      code: `<Divider type="primary" />
+<Divider type="secondary" />
+<Divider type="tertiary" />
+<Divider type="with-label" label="Section Title" />`
+    },
+    {
+      name: 'UserProfileDropdown',
+      description: 'User profile dropdown menu component',
+      demo: (
+        <div style={{ width: '100%', display: 'flex', justifyContent: 'center' }}>
+          <UserProfileDropdown 
+            userName="John Doe"
+            userRole="Administrator"
+            userLocation="Mumbai, India"
+            company={{
+              name: 'ft',
+              displayName: 'Freight Tiger'
+            }}
+          />
+        </div>
+      ),
+      code: `<UserProfileDropdown 
+  userName="John Doe"
+  userRole="Administrator"
+  userLocation="Mumbai, India"
+  company={{ name: 'ft', displayName: 'Freight Tiger' }}
+/>`
+    },
+    {
+      name: 'ListingLayout',
+      description: 'Template layout component for listing pages',
+      demo: (
+        <div style={{ width: '100%' }}>
+          <ListingLayout 
+            variant="default"
+            layout="single-column"
+            sections={[
+              {
+                title: 'Section 1',
+                content: 'Content for section 1'
+              }
+            ]}
+          />
+        </div>
+      ),
+      code: `<ListingLayout 
+  variant="default"
+  layout="single-column"
+  sections={[
+    { title: 'Section 1', content: 'Content here' }
+  ]}
+/>`
     },
     {
       name: 'Icons (200+ Available)',
