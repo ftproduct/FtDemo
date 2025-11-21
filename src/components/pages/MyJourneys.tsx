@@ -9,12 +9,14 @@ import {
   Dropdown,
   QuickFilters,
   DatePicker,
-  Spacer,
+  Card,
   Divider,
+  SegmentedTabs,
   type TableColumn
 } from 'ft-design-system/ai';
 import { type Journey } from '../../api/journeys';
 import '../../styles/globals.css';
+import { mockJourneys } from '../../data/mockJourneys';
 import AppHeader from '../AppHeader';
 import {
   Home,
@@ -36,7 +38,14 @@ import {
   MapPin,
   CheckCircle2,
   AlertCircle,
-  Star
+  Star,
+  Signal,
+  SignalHigh,
+  SignalMedium,
+  SignalLow,
+  SignalZero,
+  Truck,
+  Package
 } from 'lucide-react';
 
 interface MyJourneysProps {
@@ -60,162 +69,29 @@ export default function MyJourneys({ onOpenNavigation }: MyJourneysProps) {
   const [visibleTabs, setVisibleTabs] = useState<typeof tabs>([]);
   const [hiddenTabs, setHiddenTabs] = useState<typeof tabs>([]);
   const [showOverflowDropdown, setShowOverflowDropdown] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
 
-  // Mock data
-  const mockJourneys: Journey[] = [
-    {
-      journey_id: 1,
-      feed_unique_id: '324673-948B478-84...',
-      origin_display: 'Amritsar, Punjab',
-      origin_company_display: 'MDC Labs ltd',
-      destination_display: 'Mumbai, M...',
-      destination_company_display: 'Maa kaali Distribut...',
-      vehicle_number: 'PB09 HH 6439',
-      transporter_name: 'Yonex Transporter',
-      trip_type_display: 'SIM',
-      trip_id: '84973-47593',
-      status_display: 'On Road',
-      current_location_display: 'Ambala, Haryana',
-      sla_status: 'on_time',
-      sla_status_display: 'On time',
-      eta_display: 'ETA: 12:30 pm, 12 Aug',
-      alert_type: null,
-      alert_time_display: null,
-      tab_status: 'in_transit',
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString()
-    },
-    {
-      journey_id: 2,
-      feed_unique_id: '324673-948B478-84...',
-      origin_display: 'Amritsar, Punjab',
-      origin_company_display: 'MDC Labs LTD',
-      destination_display: 'Secunderabad, Tel...',
-      destination_company_display: 'Sai Traders',
-      vehicle_number: 'KA12 AS 3422',
-      transporter_name: 'Laal Kamal Trans...',
-      trip_type_display: 'GPS',
-      trip_id: '84973-47593',
-      status_display: 'At Pickup',
-      current_location_display: 'Ambala, Haryana',
-      sla_status: 'delayed',
-      sla_status_display: 'Delayed by 13 hr',
-      eta_display: 'ETA: 12:30 pm, 12 Aug',
-      alert_type: 'long_stoppage',
-      alert_time_display: '1 hour ago',
-      tab_status: 'in_transit',
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString()
-    },
-    {
-      journey_id: 3,
-      feed_unique_id: '324673-948B478-84...',
-      origin_display: 'Amritsar, Punjab',
-      origin_company_display: 'MDC Labs LTD',
-      destination_display: 'Secunderabad, Tel...',
-      destination_company_display: 'Sai Traders',
-      vehicle_number: 'KA12 AS 3423',
-      transporter_name: 'Laal Kamal Trans...',
-      trip_type_display: 'Fastag',
-      trip_id: '84973-47593',
-      status_display: 'At Drop',
-      current_location_display: 'Ambala, Haryana',
-      sla_status: 'delayed',
-      sla_status_display: 'Delayed by 13 hr',
-      eta_display: 'ETA: 12:30 pm, 12 Aug',
-      alert_type: 'route_deviation',
-      alert_time_display: '1 hour ago',
-      tab_status: 'in_transit',
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString()
-    },
-    {
-      journey_id: 4,
-      feed_unique_id: '324673-948B478-84...',
-      origin_display: 'Amritsar, Punjab',
-      origin_company_display: 'MDC Labs LTD',
-      destination_display: 'Siddipet, Telangana',
-      destination_company_display: 'Jai Sri Ram',
-      vehicle_number: 'KA12 AS 3424',
-      transporter_name: 'Laal Kamal Trans...',
-      trip_type_display: 'GPS',
-      trip_id: '84973-47593',
-      status_display: 'On Road',
-      current_location_display: 'at 12:30 pm, 12 Aug',
-      sla_status: 'on_time',
-      sla_status_display: 'On time',
-      eta_display: 'ETA: 12:30 pm, 12 Aug',
-      alert_type: null,
-      alert_time_display: null,
-      tab_status: 'in_transit',
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString()
-    },
-    {
-      journey_id: 5,
-      feed_unique_id: '324673-948B478-84...',
-      origin_display: 'Amritsar, Punjab',
-      origin_company_display: 'MDC Labs LTD',
-      destination_display: 'Secunderabad, Tel...',
-      destination_company_display: 'Sai Traders',
-      vehicle_number: 'KA12 AS 3423',
-      transporter_name: 'Laal Kamal Trans...',
-      trip_type_display: 'Fastag',
-      trip_id: '84973-47593',
-      status_display: 'On Road',
-      current_location_display: 'Ambala, Haryana',
-      sla_status: 'delayed',
-      sla_status_display: 'Delayed by 13 hr',
-      eta_display: 'ETA: 12:30 pm, 12 Aug',
-      alert_type: 'transit_delay',
-      alert_time_display: '1 hour ago',
-      tab_status: 'in_transit',
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString()
-    },
-    {
-      journey_id: 6,
-      feed_unique_id: '324673-948B478-84...',
-      origin_display: 'Amritsar, Punjab',
-      origin_company_display: 'MDC Labs LTD',
-      destination_display: 'Secunderabad, Tel...',
-      destination_company_display: 'Sai Traders',
-      vehicle_number: 'KA12 AS 3421',
-      transporter_name: 'Laal Kamal Trans...',
-      trip_type_display: 'SIM',
-      trip_id: '84973-47593',
-      status_display: 'At Drop',
-      current_location_display: 'Ambala, Haryana',
-      sla_status: 'on_time',
-      sla_status_display: 'On time',
-      eta_display: 'ETA: 12:30 pm, 12 Aug',
-      alert_type: null,
-      alert_time_display: null,
-      tab_status: 'in_transit',
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString()
-    }
-  ];
+
 
   // Calculate counts from actual data
   const calculateTabCounts = React.useMemo(() => {
     const allJourneys = journeys.length > 0 ? journeys : mockJourneys;
     return {
-      planned: allJourneys.filter(j => j.tab_status === 'planned').length,
-      en_route_to_loading: allJourneys.filter(j => j.tab_status === 'en_route_to_loading').length,
-      at_loading: allJourneys.filter(j => j.tab_status === 'at_loading').length,
-      in_transit: allJourneys.filter(j => j.tab_status === 'in_transit').length,
-      at_unloading: allJourneys.filter(j => j.tab_status === 'at_unloading').length,
-      in_return: allJourneys.filter(j => j.tab_status === 'in_return').length,
-      delivered: allJourneys.filter(j => j.tab_status === 'delivered').length
+      planned: allJourneys.filter((j: Journey) => j.tab_status === 'planned').length,
+      en_route_to_loading: allJourneys.filter((j: Journey) => j.tab_status === 'en_route_to_loading').length,
+      at_loading: allJourneys.filter((j: Journey) => j.tab_status === 'at_loading').length,
+      in_transit: allJourneys.filter((j: Journey) => j.tab_status === 'in_transit').length,
+      at_unloading: allJourneys.filter((j: Journey) => j.tab_status === 'at_unloading').length,
+      in_return: allJourneys.filter((j: Journey) => j.tab_status === 'in_return').length,
+      delivered: allJourneys.filter((j: Journey) => j.tab_status === 'delivered').length
     };
   }, [journeys]);
 
   const calculateFilterCounts = React.useMemo(() => {
     const allJourneys = journeys.length > 0 ? journeys : mockJourneys;
-    const delayed = allJourneys.filter(j => j.sla_status === 'delayed');
-    const longStoppage = allJourneys.filter(j => j.alert_type === 'long_stoppage').length;
-    const routeDeviation = allJourneys.filter(j => j.alert_type === 'route_deviation').length;
+    const delayed = allJourneys.filter((j: Journey) => j.sla_status === 'delayed');
+    const longStoppage = allJourneys.filter((j: Journey) => j.alert_type === 'long_stoppage').length;
+    const routeDeviation = allJourneys.filter((j: Journey) => j.alert_type === 'route_deviation').length;
 
     return {
       stoppage: longStoppage,
@@ -234,13 +110,13 @@ export default function MyJourneys({ onOpenNavigation }: MyJourneysProps) {
 
   // Tabs configuration with icons - using dynamic counts
   const tabs = React.useMemo(() => [
-    { label: 'Planned', badge: true, badgeCount: calculateTabCounts.planned, icon: true },
-    { label: 'En Route to Loading', badge: true, badgeCount: calculateTabCounts.en_route_to_loading, icon: true },
-    { label: 'At Loading', badge: true, badgeCount: calculateTabCounts.at_loading, icon: true },
-    { label: 'In Transit', badge: true, badgeCount: calculateTabCounts.in_transit, icon: true },
-    { label: 'At Unloading', badge: true, badgeCount: calculateTabCounts.at_unloading, icon: true },
-    { label: 'In Return', badge: true, badgeCount: calculateTabCounts.in_return, icon: true },
-    { label: 'Delivered', badge: true, badgeCount: calculateTabCounts.delivered, icon: true }
+    { label: 'Planned', badge: true, badgeCount: calculateTabCounts.planned, icon: <Calendar style={{ width: '16px', height: '16px' }} /> },
+    { label: 'En Route to Loading', badge: true, badgeCount: calculateTabCounts.en_route_to_loading, icon: <Truck style={{ width: '16px', height: '16px' }} /> },
+    { label: 'At Loading', badge: true, badgeCount: calculateTabCounts.at_loading, icon: <Package style={{ width: '16px', height: '16px' }} /> },
+    { label: 'In Transit', badge: true, badgeCount: calculateTabCounts.in_transit, icon: <MapPin style={{ width: '16px', height: '16px' }} /> },
+    { label: 'At Unloading', badge: true, badgeCount: calculateTabCounts.at_unloading, icon: <Package style={{ width: '16px', height: '16px' }} /> },
+    { label: 'In Return', badge: true, badgeCount: calculateTabCounts.in_return, icon: <RefreshCw style={{ width: '16px', height: '16px' }} /> },
+    { label: 'Delivered', badge: true, badgeCount: calculateTabCounts.delivered, icon: <CheckCircle2 style={{ width: '16px', height: '16px' }} /> }
   ], [calculateTabCounts]);
 
   // Calculate which tabs fit and which overflow - measure from hidden container
@@ -259,7 +135,6 @@ export default function MyJourneys({ onOpenNavigation }: MyJourneysProps) {
 
     const containerWidth = tabsContainerRef.current.offsetWidth || 0;
     const dropdownButtonWidth = 120; // Width reserved for dropdown button
-    const availableWidth = containerWidth - dropdownButtonWidth;
 
     const tabElements = hiddenContainer.querySelectorAll('[data-slot="tabs-trigger"]');
 
@@ -270,6 +145,24 @@ export default function MyJourneys({ onOpenNavigation }: MyJourneysProps) {
       return;
     }
 
+    // First pass: Check if ALL tabs fit within the full container width
+    let totalTabsWidth = 0;
+    tabElements.forEach((el) => {
+      totalTabsWidth += (el as HTMLElement).offsetWidth || 0;
+    });
+
+    // Add gap spacing (tabs.length - 1 * 8px gap)
+    totalTabsWidth += (tabs.length - 1) * 8;
+
+    if (totalTabsWidth <= containerWidth) {
+      setVisibleTabs(tabs);
+      setHiddenTabs([]);
+      setShowOverflowDropdown(false);
+      return;
+    }
+
+    // Second pass: If they don't fit, calculate with reserved space for dropdown
+    const availableWidth = containerWidth - dropdownButtonWidth;
     let usedWidth = 0;
     const visible: typeof tabs = [];
     const hidden: typeof tabs = [];
@@ -278,32 +171,30 @@ export default function MyJourneys({ onOpenNavigation }: MyJourneysProps) {
       if (index >= tabs.length) return;
 
       const tabWidth = (tabElement as HTMLElement).offsetWidth || 0;
+      // Add gap if not the first item
+      const gap = visible.length > 0 ? 8 : 0;
 
-      if (usedWidth + tabWidth <= availableWidth) {
+      if (usedWidth + tabWidth + gap <= availableWidth) {
         visible.push(tabs[index]);
-        usedWidth += tabWidth;
+        usedWidth += tabWidth + gap;
       } else {
         hidden.push(tabs[index]);
       }
     });
-
-    // If all tabs fit, ensure we show them all
-    if (hidden.length === 0 && visible.length < tabs.length) {
-      const remaining = tabs.slice(visible.length);
-      visible.push(...remaining);
-    }
 
     setVisibleTabs(visible);
     setHiddenTabs(hidden);
     setShowOverflowDropdown(hidden.length > 0);
   }, [tabs]);
 
-  // Initialize visible tabs when tabs are ready
+  // Initialize visible tabs when tabs are ready - always show all tabs initially
   useEffect(() => {
     if (tabs.length > 0 && visibleTabs.length === 0) {
       setVisibleTabs(tabs);
+      setHiddenTabs([]);
+      setShowOverflowDropdown(false);
     }
-  }, [tabs]);
+  }, [tabs, visibleTabs.length]);
 
   useEffect(() => {
     // Delay to ensure DOM has rendered before measuring
@@ -350,12 +241,24 @@ export default function MyJourneys({ onOpenNavigation }: MyJourneysProps) {
     setSelectedJourneyIds([]);
   }, [selectedTab]);
 
+  // Track screen width for responsive view
+  useEffect(() => {
+    const checkScreenWidth = () => {
+      setIsMobile(window.innerWidth <= 800);
+    };
+
+    checkScreenWidth();
+    window.addEventListener('resize', checkScreenWidth);
+    return () => window.removeEventListener('resize', checkScreenWidth);
+  }, []);
+
+
   // Filter journeys based on active filters
   useEffect(() => {
     let filtered = [...journeys];
 
     if (activeFilters.size > 0) {
-      filtered = journeys.filter(journey => {
+      filtered = journeys.filter((journey: Journey) => {
         // Check each active filter
         for (const filterKey of activeFilters) {
           const [filterId, optionId] = filterKey.split(':');
@@ -408,10 +311,10 @@ export default function MyJourneys({ onOpenNavigation }: MyJourneysProps) {
       id: 'delayed',
       label: 'Delayed',
       count: calculateFilterCounts.delayed,
-      type: 'normal' as const,
+      type: 'alert' as const,
       options: [
-        { id: '0-6hrs', label: '0-6 hrs', count: calculateFilterCounts['0-6hrs'], type: 'warning' as const },
-        { id: '6-12hrs', label: '6-12 hrs', count: calculateFilterCounts['6-12hrs'], type: 'warning' as const },
+        { id: '0-6hrs', label: '0-6 hrs', count: calculateFilterCounts['0-6hrs'], type: 'alert' as const },
+        { id: '6-12hrs', label: '6-12 hrs', count: calculateFilterCounts['6-12hrs'], type: 'alert' as const },
         { id: '12plus', label: '12+ hrs', count: calculateFilterCounts['12plus'], type: 'alert' as const }
       ]
     },
@@ -443,36 +346,54 @@ export default function MyJourneys({ onOpenNavigation }: MyJourneysProps) {
     {
       key: 'select',
       title: (
-        <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2)' }}>
-          <Checkbox
-            checked={selectAll}
-            onChange={(event) => {
-              setSelectAll(event.target.checked);
-              if (event.target.checked) {
-                const allIds = (activeFilters.size > 0 ? filteredJourneys : journeys).map(j => j.journey_id);
-                setSelectedJourneyIds(allIds);
-              } else {
-                setSelectedJourneyIds([]);
-              }
-            }}
-          />
+        <div style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          gap: 'var(--space-2)',
+          width: '100%',
+          padding: '0 12px'
+        }}>
+          <div style={{ width: '16px', height: '16px', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <Checkbox
+              checked={selectAll}
+              onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                setSelectAll(event.target.checked);
+                if (event.target.checked) {
+                  const allIds = (activeFilters.size > 0 ? filteredJourneys : journeys).map((j: Journey) => j.journey_id);
+                  setSelectedJourneyIds(allIds);
+                } else {
+                  setSelectedJourneyIds([]);
+                }
+              }}
+            />
+          </div>
           <Star style={{ width: '16px', height: '16px', color: 'var(--secondary)', flexShrink: 0 }} />
         </div>
       ) as any,
-      width: '48px',
+      width: 48 as any,
       render: (_: any, record: Journey) => (
-        <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2)' }}>
-          <Checkbox
-            checked={selectedJourneyIds.includes(record.journey_id)}
-            onChange={(event) => {
-              setSelectedJourneyIds((prev) => {
-                if (event.target.checked) {
-                  return Array.from(new Set([...prev, record.journey_id]));
-                }
-                return prev.filter((id) => id !== record.journey_id);
-              });
-            }}
-          />
+        <div style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          gap: 'var(--space-2)',
+          width: '100%',
+          padding: '0 12px'
+        }}>
+          <div style={{ width: '16px', height: '16px', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <Checkbox
+              checked={selectedJourneyIds.includes(record.journey_id)}
+              onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                setSelectedJourneyIds((prev: number[]) => {
+                  if (event.target.checked) {
+                    return Array.from(new Set([...prev, record.journey_id]));
+                  }
+                  return prev.filter((id: number) => id !== record.journey_id);
+                });
+              }}
+            />
+          </div>
           <Star style={{ width: '16px', height: '16px', color: 'var(--secondary)', flexShrink: 0 }} />
         </div>
       )
@@ -480,32 +401,51 @@ export default function MyJourneys({ onOpenNavigation }: MyJourneysProps) {
     {
       key: 'feed_unique_id',
       title: 'Feed Unique ID',
-      width: '200px',
+      width: 200 as any,
       render: (_: any, record: Journey) => (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-2)' }}>
+        <div style={{
+          minWidth: 0,
+          display: 'flex',
+          flexDirection: 'column',
+          gap: 'var(--space-2)',
+          padding: 0
+        }}>
           <div style={{
+            minWidth: 0,
             overflow: 'hidden',
             textOverflow: 'ellipsis',
-            display: '-webkit-box',
-            WebkitLineClamp: 2,
-            WebkitBoxOrient: 'vertical',
+            whiteSpace: 'nowrap',
             lineHeight: 'var(--line-height-normal)',
             fontSize: 'var(--font-size-sm)',
             color: 'var(--primary)'
           }}>
             {record.feed_unique_id}
           </div>
-          <Button variant="link" style={{ padding: 0, height: 'auto', fontSize: 'var(--font-size-sm)', color: '#2563EB', fontWeight: '500' }}>View ID's</Button>
+          <Button variant="link" style={{
+            padding: 0,
+            height: 'auto',
+            minWidth: 0,
+            fontSize: 'var(--font-size-sm)',
+            color: '#1890FF',
+            fontWeight: '500'
+          }}>View ID's</Button>
         </div>
       )
     },
     {
       key: 'from',
       title: 'From',
-      width: '200px',
+      width: 200 as any,
       render: (_: any, record: Journey) => (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-2)' }}>
+        <div style={{
+          minWidth: 0,
+          display: 'flex',
+          flexDirection: 'column',
+          gap: 'var(--space-2)',
+          padding: 0
+        }}>
           <div style={{
+            minWidth: 0,
             display: 'flex',
             alignItems: 'center',
             gap: 'var(--space-2)',
@@ -523,9 +463,10 @@ export default function MyJourneys({ onOpenNavigation }: MyJourneysProps) {
             }}>
               {record.origin_display}
             </span>
-            <Badge variant="normal" style={{ alignSelf: 'center' }}>+1P</Badge>
+            <Badge variant="normal" style={{ alignSelf: 'center', flexShrink: 0, borderRadius: '12px', padding: '2px 8px', fontSize: '11px', fontWeight: 500, backgroundColor: '#F3F4F6', color: '#4B5563' }}>+1P</Badge>
           </div>
           <div style={{
+            minWidth: 0,
             overflow: 'hidden',
             textOverflow: 'ellipsis',
             display: '-webkit-box',
@@ -543,10 +484,17 @@ export default function MyJourneys({ onOpenNavigation }: MyJourneysProps) {
     {
       key: 'to',
       title: 'To',
-      width: '200px',
+      width: 200 as any,
       render: (_: any, record: Journey) => (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-2)' }}>
+        <div style={{
+          minWidth: 0,
+          display: 'flex',
+          flexDirection: 'column',
+          gap: 'var(--space-2)',
+          padding: 0
+        }}>
           <div style={{
+            minWidth: 0,
             display: 'flex',
             alignItems: 'center',
             gap: 'var(--space-2)',
@@ -564,9 +512,10 @@ export default function MyJourneys({ onOpenNavigation }: MyJourneysProps) {
             }}>
               {record.destination_display}
             </span>
-            <Badge variant="normal" style={{ alignSelf: 'center' }}>+3D</Badge>
+            <Badge variant="normal" style={{ alignSelf: 'center', flexShrink: 0, borderRadius: '12px', padding: '2px 8px', fontSize: '11px', fontWeight: 500, backgroundColor: '#F3F4F6', color: '#4B5563' }}>+3D</Badge>
           </div>
           <div style={{
+            minWidth: 0,
             overflow: 'hidden',
             textOverflow: 'ellipsis',
             display: '-webkit-box',
@@ -584,15 +533,20 @@ export default function MyJourneys({ onOpenNavigation }: MyJourneysProps) {
     {
       key: 'vehicle',
       title: 'Vehicle Info',
-      width: '200px',
+      width: 200 as any,
       render: (_: any, record: Journey) => (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-2)' }}>
+        <div style={{
+          minWidth: 0,
+          display: 'flex',
+          flexDirection: 'column',
+          gap: 'var(--space-2)',
+          padding: 0
+        }}>
           <div style={{
+            minWidth: 0,
             overflow: 'hidden',
             textOverflow: 'ellipsis',
-            display: '-webkit-box',
-            WebkitLineClamp: 2,
-            WebkitBoxOrient: 'vertical',
+            whiteSpace: 'nowrap',
             lineHeight: 'var(--line-height-normal)',
             fontSize: 'var(--font-size-sm)',
             color: 'var(--primary)'
@@ -600,11 +554,10 @@ export default function MyJourneys({ onOpenNavigation }: MyJourneysProps) {
             {record.vehicle_number}
           </div>
           <div style={{
+            minWidth: 0,
             overflow: 'hidden',
             textOverflow: 'ellipsis',
-            display: '-webkit-box',
-            WebkitLineClamp: 2,
-            WebkitBoxOrient: 'vertical',
+            whiteSpace: 'nowrap',
             lineHeight: 'var(--line-height-normal)',
             fontSize: 'var(--font-size-sm)',
             color: 'var(--secondary)'
@@ -617,16 +570,14 @@ export default function MyJourneys({ onOpenNavigation }: MyJourneysProps) {
     {
       key: 'trip',
       title: 'Trip Info',
-      width: '200px',
+      width: 200 as any,
       render: (_: any, record: Journey) => {
         const getTripIcon = (type: string) => {
           if (type === 'SIM') {
-            return <div style={{ width: '16px', height: '16px', borderRadius: '50%', background: '#52c41a', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <div style={{ width: '8px', height: '8px', background: 'white', borderRadius: '50%' }} />
-            </div>;
+            return <SignalHigh style={{ width: '16px', height: '16px', color: 'var(--positive)' }} />;
           }
           if (type === 'GPS') {
-            return <MapPin style={{ width: '20px', height: '20px', color: '#1890ff' }} />;
+            return <MapPin style={{ width: '20px', height: '20px', color: 'var(--neutral)' }} />;
           }
           if (type === 'Fastag') {
             return <div style={{ width: '16px', height: '16px', borderRadius: '2px', background: '#722ed1', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '10px', color: 'white', fontWeight: 600 }}>F</div>;
@@ -635,8 +586,15 @@ export default function MyJourneys({ onOpenNavigation }: MyJourneysProps) {
         };
 
         return (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-2)' }}>
+          <div style={{
+            minWidth: 0,
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 'var(--space-2)',
+            padding: 0
+          }}>
             <div style={{
+              minWidth: 0,
               display: 'flex',
               alignItems: 'center',
               gap: 'var(--space-2)',
@@ -645,6 +603,7 @@ export default function MyJourneys({ onOpenNavigation }: MyJourneysProps) {
             }}>
               <div style={{ flexShrink: 0 }}>{getTripIcon(record.trip_type_display)}</div>
               <span style={{
+                minWidth: 0,
                 overflow: 'hidden',
                 textOverflow: 'ellipsis',
                 whiteSpace: 'nowrap',
@@ -655,6 +614,7 @@ export default function MyJourneys({ onOpenNavigation }: MyJourneysProps) {
               </span>
             </div>
             <div style={{
+              minWidth: 0,
               display: 'flex',
               alignItems: 'center',
               gap: 'var(--space-2)',
@@ -663,6 +623,7 @@ export default function MyJourneys({ onOpenNavigation }: MyJourneysProps) {
             }}>
               <CheckCircle2 style={{ width: '14px', height: '14px', color: 'var(--positive)', flexShrink: 0 }} />
               <span style={{
+                minWidth: 0,
                 overflow: 'hidden',
                 textOverflow: 'ellipsis',
                 whiteSpace: 'nowrap',
@@ -679,10 +640,17 @@ export default function MyJourneys({ onOpenNavigation }: MyJourneysProps) {
     {
       key: 'status',
       title: 'Status',
-      width: '200px',
+      width: 200 as any,
       render: (_: any, record: Journey) => (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-2)' }}>
+        <div style={{
+          minWidth: 0,
+          display: 'flex',
+          flexDirection: 'column',
+          gap: 'var(--space-2)',
+          padding: 0
+        }}>
           <div style={{
+            minWidth: 0,
             display: 'flex',
             alignItems: 'center',
             gap: 'var(--space-2)',
@@ -691,6 +659,7 @@ export default function MyJourneys({ onOpenNavigation }: MyJourneysProps) {
           }}>
             <MapPin style={{ width: '20px', height: '20px', color: 'var(--secondary)', flexShrink: 0 }} />
             <span style={{
+              minWidth: 0,
               overflow: 'hidden',
               textOverflow: 'ellipsis',
               whiteSpace: 'nowrap',
@@ -701,6 +670,7 @@ export default function MyJourneys({ onOpenNavigation }: MyJourneysProps) {
             </span>
           </div>
           <div style={{
+            minWidth: 0,
             display: 'flex',
             alignItems: 'center',
             gap: 'var(--space-2)',
@@ -709,6 +679,7 @@ export default function MyJourneys({ onOpenNavigation }: MyJourneysProps) {
           }}>
             <MapPin style={{ width: '20px', height: '20px', color: 'var(--secondary)', flexShrink: 0 }} />
             <span style={{
+              minWidth: 0,
               overflow: 'hidden',
               textOverflow: 'ellipsis',
               whiteSpace: 'nowrap',
@@ -724,10 +695,17 @@ export default function MyJourneys({ onOpenNavigation }: MyJourneysProps) {
     {
       key: 'sla',
       title: 'SLA',
-      width: '200px',
+      width: 200 as any,
       render: (_: any, record: Journey) => (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-2)' }}>
+        <div style={{
+          minWidth: 0,
+          display: 'flex',
+          flexDirection: 'column',
+          gap: 'var(--space-2)',
+          padding: 0
+        }}>
           <div style={{
+            minWidth: 0,
             display: 'flex',
             alignItems: 'center',
             gap: 'var(--space-2)',
@@ -735,22 +713,24 @@ export default function MyJourneys({ onOpenNavigation }: MyJourneysProps) {
             overflow: 'hidden'
           }}>
             {record.sla_status === 'on_time' ? (
-              <CheckCircle2 style={{ width: '20px', height: '20px', color: '#10B981', flexShrink: 0 }} />
+              <CheckCircle2 style={{ width: '20px', height: '20px', color: '#00C853', flexShrink: 0 }} />
             ) : (
-              <Clock style={{ width: '20px', height: '20px', color: 'var(--critical)', flexShrink: 0 }} />
+              <Clock style={{ width: '20px', height: '20px', color: '#D32F2F', flexShrink: 0 }} />
             )}
             <span style={{
-              color: record.sla_status === 'on_time' ? 'var(--positive)' : 'var(--critical)',
+              minWidth: 0,
+              color: record.sla_status === 'on_time' ? '#00C853' : '#D32F2F',
               overflow: 'hidden',
               textOverflow: 'ellipsis',
               whiteSpace: 'nowrap',
               fontSize: 'var(--font-size-sm)',
-              fontWeight: record.sla_status === 'on_time' ? 'var(--font-weight-medium)' : 'var(--font-weight-bold)'
+              fontWeight: 700
             }}>
               {record.sla_status_display}
             </span>
           </div>
           <div style={{
+            minWidth: 0,
             overflow: 'hidden',
             textOverflow: 'ellipsis',
             display: '-webkit-box',
@@ -768,7 +748,7 @@ export default function MyJourneys({ onOpenNavigation }: MyJourneysProps) {
     {
       key: 'alerts',
       title: 'Alerts',
-      width: '200px',
+      width: 200 as any,
       render: (_: any, record: Journey) => {
         if (!record.alert_type) return null;
 
@@ -779,18 +759,32 @@ export default function MyJourneys({ onOpenNavigation }: MyJourneysProps) {
         };
 
         return (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-2)' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2)', flexWrap: 'wrap' }}>
+          <div style={{
+            minWidth: 0,
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 'var(--space-2)',
+            padding: 0
+          }}>
+            <div style={{
+              minWidth: 0,
+              display: 'flex',
+              alignItems: 'center',
+              gap: 'var(--space-2)',
+              flexWrap: 'wrap'
+            }}>
               <Badge variant="danger" style={{
                 height: '24px',
                 borderRadius: '6px',
                 padding: '4px 8px',
                 fontSize: 'var(--font-size-xs)',
-                fontWeight: 'var(--font-weight-medium)'
+                fontWeight: 'var(--font-weight-medium)',
+                flexShrink: 0
               }}>
                 {alertLabels[record.alert_type] || record.alert_type}
               </Badge>
               <span style={{
+                minWidth: 0,
                 fontSize: '12px',
                 color: 'var(--secondary)',
                 whiteSpace: 'nowrap'
@@ -805,7 +799,7 @@ export default function MyJourneys({ onOpenNavigation }: MyJourneysProps) {
     {
       key: 'actions',
       title: 'Actions',
-      width: '100px',
+      width: 100 as any,
       render: () => (
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 'var(--space-2)', paddingRight: 'var(--space-4)' }}>
           <div style={{
@@ -818,8 +812,8 @@ export default function MyJourneys({ onOpenNavigation }: MyJourneysProps) {
             cursor: 'pointer',
             transition: 'background-color var(--transition-fast)'
           }}
-            onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = 'var(--surface-hover)'; }}
-            onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = 'transparent'; }}
+            onMouseEnter={(e: React.MouseEvent<HTMLDivElement>) => { e.currentTarget.style.backgroundColor = 'var(--surface-hover)'; }}
+            onMouseLeave={(e: React.MouseEvent<HTMLDivElement>) => { e.currentTarget.style.backgroundColor = 'transparent'; }}
           >
             <MoreHorizontal style={{ width: '16px', height: '16px', color: 'var(--secondary)' }} />
           </div>
@@ -828,23 +822,251 @@ export default function MyJourneys({ onOpenNavigation }: MyJourneysProps) {
     }
   ];
 
+  // Helper function to get trip icon
+  const getTripIcon = (type: string) => {
+    if (type === 'SIM') {
+      return <SignalHigh style={{ width: '16px', height: '16px', color: 'var(--positive)' }} />;
+    }
+    if (type === 'GPS') {
+      return <MapPin style={{ width: '20px', height: '20px', color: 'var(--neutral)' }} />;
+    }
+    if (type === 'Fastag') {
+      return <div style={{ width: '16px', height: '16px', borderRadius: '2px', background: '#722ed1', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '10px', color: 'white', fontWeight: 600 }}>F</div>;
+    }
+    return null;
+  };
+
+  // Helper function to render journey card
+  const renderJourneyCard = (journey: Journey) => {
+    const alertLabels: Record<string, string> = {
+      long_stoppage: 'Long Stoppage',
+      route_deviation: 'Route Deviation',
+      transit_delay: 'Transit Delay'
+    };
+
+    return (
+      <Card
+        key={journey.journey_id}
+        style={{
+          padding: 'var(--space-4)',
+          marginBottom: 'var(--space-3)',
+          border: '1px solid var(--border-primary)',
+          borderRadius: 'var(--radius-lg)',
+          backgroundColor: 'var(--bg-primary)'
+        }}
+      >
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-4)' }}>
+          {/* Header Row */}
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-3)', flex: 1 }}>
+              <Checkbox
+                checked={selectedJourneyIds.includes(journey.journey_id)}
+                onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                  setSelectedJourneyIds((prev: number[]) => {
+                    if (event.target.checked) {
+                      return Array.from(new Set([...prev, journey.journey_id]));
+                    }
+                    return prev.filter((id: number) => id !== journey.journey_id);
+                  });
+                }}
+              />
+              <Star style={{ width: '16px', height: '16px', color: 'var(--secondary)', flexShrink: 0 }} />
+              <div style={{ flex: 1 }}>
+                <div style={{ fontSize: 'var(--font-size-sm)', fontWeight: 'var(--font-weight-semibold)', color: 'var(--primary)', marginBottom: 'var(--space-1)' }}>
+                  {journey.feed_unique_id}
+                </div>
+                <Button variant="link" style={{ padding: 0, height: 'auto', fontSize: 'var(--font-size-sm)', color: 'var(--neutral)', fontWeight: '500' }}>View ID's</Button>
+              </div>
+            </div>
+            <div style={{
+              width: '32px',
+              height: '32px',
+              borderRadius: '50%',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              cursor: 'pointer',
+              transition: 'background-color var(--transition-fast)'
+            }}
+              onMouseEnter={(e: React.MouseEvent<HTMLDivElement>) => { e.currentTarget.style.backgroundColor = 'var(--surface-hover)'; }}
+              onMouseLeave={(e: React.MouseEvent<HTMLDivElement>) => { e.currentTarget.style.backgroundColor = 'transparent'; }}
+            >
+              <MoreHorizontal style={{ width: '16px', height: '16px', color: 'var(--secondary)' }} />
+            </div>
+          </div>
+
+          {/* From/To Section */}
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--space-4)' }}>
+            <div>
+              <div style={{ fontSize: 'var(--font-size-xs)', color: 'var(--secondary)', marginBottom: 'var(--space-1)' }}>From</div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2)', marginBottom: 'var(--space-1)' }}>
+                <span style={{ fontSize: 'var(--font-size-sm)', color: 'var(--primary)', fontWeight: 'var(--font-weight-medium)' }}>
+                  {journey.origin_display}
+                </span>
+                <Badge variant="normal">+1P</Badge>
+              </div>
+              <div style={{ fontSize: 'var(--font-size-sm)', color: 'var(--secondary)' }}>
+                {journey.origin_company_display}
+              </div>
+            </div>
+            <div>
+              <div style={{ fontSize: 'var(--font-size-xs)', color: 'var(--secondary)', marginBottom: 'var(--space-1)' }}>To</div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2)', marginBottom: 'var(--space-1)' }}>
+                <span style={{ fontSize: 'var(--font-size-sm)', color: 'var(--primary)', fontWeight: 'var(--font-weight-medium)' }}>
+                  {journey.destination_display}
+                </span>
+                <Badge variant="normal">+3D</Badge>
+              </div>
+              <div style={{ fontSize: 'var(--font-size-sm)', color: 'var(--secondary)' }}>
+                {journey.destination_company_display}
+              </div>
+            </div>
+          </div>
+
+          {/* Vehicle & Trip Info */}
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--space-4)' }}>
+            <div>
+              <div style={{ fontSize: 'var(--font-size-xs)', color: 'var(--secondary)', marginBottom: 'var(--space-1)' }}>Vehicle Info</div>
+              <div style={{ fontSize: 'var(--font-size-sm)', color: 'var(--primary)', fontWeight: 'var(--font-weight-medium)', marginBottom: 'var(--space-1)' }}>
+                {journey.vehicle_number}
+              </div>
+              <div style={{ fontSize: 'var(--font-size-sm)', color: 'var(--secondary)' }}>
+                {journey.transporter_name}
+              </div>
+            </div>
+            <div>
+              <div style={{ fontSize: 'var(--font-size-xs)', color: 'var(--secondary)', marginBottom: 'var(--space-1)' }}>Trip Info</div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2)', marginBottom: 'var(--space-1)' }}>
+                <div style={{ flexShrink: 0 }}>{getTripIcon(journey.trip_type_display)}</div>
+                <span style={{ fontSize: 'var(--font-size-sm)', color: 'var(--primary)' }}>
+                  {journey.trip_type_display}
+                </span>
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2)' }}>
+                <CheckCircle2 style={{ width: '14px', height: '14px', color: 'var(--positive)', flexShrink: 0 }} />
+                <span style={{ fontSize: 'var(--font-size-sm)', color: 'var(--primary)' }}>
+                  {journey.trip_id}
+                </span>
+              </div>
+            </div>
+          </div>
+
+          {/* Status & SLA */}
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--space-4)' }}>
+            <div>
+              <div style={{ fontSize: 'var(--font-size-xs)', color: 'var(--secondary)', marginBottom: 'var(--space-1)' }}>Status</div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2)', marginBottom: 'var(--space-1)' }}>
+                <MapPin style={{ width: '16px', height: '16px', color: 'var(--secondary)', flexShrink: 0 }} />
+                <span style={{ fontSize: 'var(--font-size-sm)', color: 'var(--primary)' }}>
+                  {journey.status_display}
+                </span>
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2)' }}>
+                <MapPin style={{ width: '16px', height: '16px', color: 'var(--secondary)', flexShrink: 0 }} />
+                <span style={{ fontSize: 'var(--font-size-sm)', color: 'var(--secondary)' }}>
+                  {journey.current_location_display}
+                </span>
+              </div>
+            </div>
+            <div>
+              <div style={{ fontSize: 'var(--font-size-xs)', color: 'var(--secondary)', marginBottom: 'var(--space-1)' }}>SLA</div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2)', marginBottom: 'var(--space-1)' }}>
+                {journey.sla_status === 'on_time' ? (
+                  <CheckCircle2 style={{ width: '16px', height: '16px', color: '#00C853', flexShrink: 0 }} />
+                ) : (
+                  <Clock style={{ width: '16px', height: '16px', color: '#D32F2F', flexShrink: 0 }} />
+                )}
+                <span style={{
+                  color: journey.sla_status === 'on_time' ? '#00C853' : '#D32F2F',
+                  fontSize: 'var(--font-size-sm)',
+                  fontWeight: 700
+                }}>
+                  {journey.sla_status_display}
+                </span>
+              </div>
+              <div style={{ fontSize: 'var(--font-size-sm)', color: 'var(--secondary)' }}>
+                {journey.eta_display}
+              </div>
+            </div>
+          </div>
+
+          {/* Alerts */}
+          {journey.alert_type && (
+            <div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2)', flexWrap: 'wrap' }}>
+                <Badge variant="danger" style={{
+                  height: '24px',
+                  borderRadius: '6px',
+                  padding: '4px 8px',
+                  fontSize: 'var(--font-size-xs)',
+                  fontWeight: 'var(--font-weight-medium)'
+                }}>
+                  {alertLabels[journey.alert_type] || journey.alert_type}
+                </Badge>
+                <span style={{
+                  fontSize: '12px',
+                  color: 'var(--secondary)',
+                  whiteSpace: 'nowrap'
+                }}>
+                  {journey.alert_time_display || '1 hour ago'}
+                </span>
+              </div>
+            </div>
+          )}
+        </div>
+      </Card>
+    );
+  };
+
   return (
     <div style={{ backgroundColor: 'var(--bg-secondary)', minHeight: '100vh' }}>
       <AppHeader onOpenNavigation={onOpenNavigation} />
-
-      <div style={{ backgroundColor: 'var(--bg-primary)', paddingTop: 'var(--space-8)', paddingLeft: 'var(--space-8)', paddingRight: 'var(--space-8)', paddingBottom: 'var(--space-8)' }}>
+      <div className="my-journeys-container" style={{ backgroundColor: 'var(--bg-primary)', paddingLeft: '20px', paddingRight: '20px' }}>
+        <style>{`
+        .my-journeys-container {
+          border: none !important;
+          border-width: 0 !important;
+          border-style: none !important;
+          border-top: none !important;
+          border-bottom: none !important;
+          border-left: none !important;
+          border-right: none !important;
+          outline: none !important;
+          box-shadow: none !important;
+        }
+        /* Override DatePicker minimum width to hug content but ensure text is visible */
+        .my-journeys-container [data-slot="date-picker"],
+        .my-journeys-container [class*="min-w-"] {
+          min-width: auto !important;
+          width: fit-content !important;
+        }
+        /* Ensure DatePicker input text is visible */
+        .my-journeys-container input[readonly][type="text"],
+        .my-journeys-container input[type="text"][readonly] {
+          min-width: fit-content !important;
+          width: auto !important;
+          overflow: visible !important;
+          text-overflow: clip !important;
+          white-space: nowrap !important;
+        }
+        /* Ensure DatePicker container shows content */
+        .my-journeys-container div[class*="relative"][class*="flex"][class*="items-center"] {
+          min-width: fit-content !important;
+          width: fit-content !important;
+        }
+      `}</style>
         {/* Title Bar + Filter Bar */}
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 'var(--page-gap)' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingTop: '20px', paddingBottom: '20px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-3)' }}>
             <Home style={{ width: '28px', height: '28px', color: 'var(--primary)' }} />
-            <h1 style={{ margin: 0, fontSize: 'var(--font-size-xl)', fontWeight: 'var(--font-weight-bold)', color: 'var(--primary)', fontFamily: 'var(--font-family-primary)' }}>My Journeys</h1>
+            <h1 style={{ margin: 0, fontSize: 'var(--font-size-xl)', fontWeight: 700, color: '#1F2937', fontFamily: 'var(--font-family-primary)' }}>My Journeys</h1>
           </div>
 
           {/* Filter Bar */}
           <div style={{
             display: 'flex',
             alignItems: 'center',
-            gap: 'var(--space-6)',
+            gap: 'var(--space-4)',
             height: 'var(--component-height-md)'
           }}>
             <Dropdown
@@ -854,11 +1076,12 @@ export default function MyJourneys({ onOpenNavigation }: MyJourneysProps) {
               ]}
               placeholder="Select company"
               defaultValue="mdc-labs"
+              style={{ height: 'var(--component-height-md)' }}
             />
 
             <DatePicker
               placeholder="12 Aug, 2024 → 12 Sep 2024"
-              style={{ width: '280px', flexShrink: 0 }}
+              style={{ width: 'fit-content', minWidth: 'fit-content', flexShrink: 0, height: 'var(--component-height-md)', border: 'none', boxShadow: 'none' }}
             />
 
             <Dropdown
@@ -868,6 +1091,7 @@ export default function MyJourneys({ onOpenNavigation }: MyJourneysProps) {
               ]}
               placeholder="Direction"
               defaultValue="outbound"
+              style={{ height: 'var(--component-height-md)' }}
             />
 
             <Input
@@ -875,28 +1099,28 @@ export default function MyJourneys({ onOpenNavigation }: MyJourneysProps) {
               leadingIcon="search"
               value={searchTerm}
               onChange={(event: React.ChangeEvent<HTMLInputElement>) => setSearchTerm(event.target.value)}
-              style={{ width: '300px', flexShrink: 0 }}
+              style={{ width: '300px', flexShrink: 0, height: 'var(--component-height-md)' }}
             />
 
-            <Button variant="primary" icon="calendar">Add Journey</Button>
+            <Button variant="primary" icon="calendar" style={{ height: 'var(--component-height-md)', backgroundColor: '#1F2937', color: 'white', borderRadius: '6px' }}>Add Journey</Button>
           </div>
         </div>
 
         {/* Tabs + View Toggle */}
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 'var(--page-gap)' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 'var(--page-gap)', width: '100%', gap: 'var(--space-4)' }}>
           <div
             ref={tabsContainerRef}
             style={{
               display: 'flex',
               alignItems: 'center',
               gap: 'var(--space-2)',
-              flex: 1,
+              flex: '1 1 0%',
               minWidth: 0,
+              maxWidth: '100%',
               position: 'relative',
               whiteSpace: 'nowrap',
-              borderBottom: '1px solid var(--border-primary)',
               padding: '0 var(--space-2)',
-              overflow: 'visible'
+              overflow: 'hidden'
             }}
           >
             {/* Hidden tabs for measurement - render all tabs invisibly */}
@@ -918,8 +1142,9 @@ export default function MyJourneys({ onOpenNavigation }: MyJourneysProps) {
               ref={tabsListRef}
               style={{
                 display: 'flex',
-                flex: 1,
+                flex: '1 1 0%',
                 minWidth: 0,
+                maxWidth: '100%',
                 overflow: 'hidden',
                 whiteSpace: 'nowrap',
                 marginRight: showOverflowDropdown && hiddenTabs.length > 0 ? 'var(--space-2)' : 0
@@ -947,6 +1172,11 @@ export default function MyJourneys({ onOpenNavigation }: MyJourneysProps) {
                   text-overflow: clip !important;
                   word-break: keep-all !important;
                   display: inline-block !important;
+                }
+                [data-slot="tabs-trigger"][data-state="active"] {
+                  box-shadow: inset 0 -2px 0 0 #1F2937 !important;
+                  color: #1F2937 !important;
+                  font-weight: 600 !important;
                 }
               `}</style>
               <Tabs
@@ -1012,7 +1242,7 @@ export default function MyJourneys({ onOpenNavigation }: MyJourneysProps) {
                     });
                     return isHidden ? String(selectedTab) : undefined;
                   })()}
-                  onChange={(value) => {
+                  onChange={(value: string) => {
                     if (value) {
                       setSelectedTab(parseInt(value));
                     }
@@ -1021,27 +1251,19 @@ export default function MyJourneys({ onOpenNavigation }: MyJourneysProps) {
               </div>
             )}
           </div>
-
-          <div style={{ display: 'flex', alignItems: 'center', gap: '4px', backgroundColor: 'var(--bg-secondary)', borderRadius: 'var(--radius-md)', padding: '4px' }}>
-            <Button
-              variant={viewMode === 'list' ? 'secondary' : 'text'}
-              style={{ width: '32px', height: '32px', padding: 0 }}
-              onClick={() => setViewMode('list')}
-            >
-              <LayoutList style={{ width: '16px', height: '16px' }} />
-            </Button>
-            <Button
-              variant={viewMode === 'map' ? 'secondary' : 'text'}
-              style={{ width: '32px', height: '32px', padding: 0 }}
-              onClick={() => setViewMode('map')}
-            >
-              <Map style={{ width: '16px', height: '16px' }} />
-            </Button>
-          </div>
+          <SegmentedTabs
+            iconOnly={true}
+            items={[
+              { value: 'list', icon: 'list-view', label: '' },
+              { value: 'map', icon: 'map', label: '' }
+            ]}
+            value={viewMode}
+            onValueChange={(value) => setViewMode(value as 'list' | 'map')}
+          />
         </div>
 
         {/* Quick Filters - Single and Multi-option */}
-        <div className="quick-filter-scroll" style={{ marginBottom: 'var(--page-gap)' }}>
+        <div className="quick-filter-scroll">
           <QuickFilters
             className="quick-filter-row"
             filters={quickFilters.map(filter => ({
@@ -1050,7 +1272,7 @@ export default function MyJourneys({ onOpenNavigation }: MyJourneysProps) {
               selectedOption: (Array.from(activeFilters) as string[])
                 .find((f: string) => f.startsWith(`${filter.id}:`))?.split(':')[1]
             }))}
-            onFilterClick={(filterId, optionId) => {
+            onFilterClick={(filterId: string, optionId?: string) => {
               const filterKey = optionId ? `${filterId}:${optionId}` : filterId;
               setActiveFilters(prev => {
                 const next = new Set(prev);
@@ -1062,7 +1284,7 @@ export default function MyJourneys({ onOpenNavigation }: MyJourneysProps) {
                 return next;
               });
             }}
-            onFilterRemove={(filterId, optionId) => {
+            onFilterRemove={(filterId: string, optionId?: string) => {
               const filterKey = optionId ? `${filterId}:${optionId}` : filterId;
               setActiveFilters(prev => {
                 const next = new Set(prev);
@@ -1079,7 +1301,6 @@ export default function MyJourneys({ onOpenNavigation }: MyJourneysProps) {
           justifyContent: 'space-between',
           alignItems: 'center',
           marginBottom: 'var(--page-gap)',
-          padding: 'var(--space-3) var(--space-4)',
           backgroundColor: 'var(--bg-primary)',
           borderRadius: 'var(--radius-md)'
         }}>
@@ -1094,19 +1315,19 @@ export default function MyJourneys({ onOpenNavigation }: MyJourneysProps) {
           </div>
 
           <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-4)' }}>
-            <Button variant="text" style={{ width: '32px', height: '32px', padding: 0, minWidth: '32px' }}>
+            <Button variant="text" style={{ width: '32px', height: '32px', padding: '8px', minWidth: '32px' }}>
               <Star style={{ width: '16px', height: '16px', color: 'var(--secondary)' }} />
             </Button>
-            <Button variant="text" style={{ width: '32px', height: '32px', padding: 0, minWidth: '32px' }}>
+            <Button variant="text" style={{ width: '32px', height: '32px', padding: '8px', minWidth: '32px' }}>
               <Download style={{ width: '16px', height: '16px', color: 'var(--secondary)' }} />
             </Button>
-            <Button variant="text" style={{ width: '32px', height: '32px', padding: 0, minWidth: '32px' }}>
+            <Button variant="text" style={{ width: '32px', height: '32px', padding: '8px', minWidth: '32px' }}>
               <Filter style={{ width: '16px', height: '16px', color: 'var(--secondary)' }} />
             </Button>
-            <Button variant="text" style={{ width: '32px', height: '32px', padding: 0, minWidth: '32px' }}>
+            <Button variant="text" style={{ width: '32px', height: '32px', padding: '8px', minWidth: '32px' }}>
               <LayoutList style={{ width: '16px', height: '16px', color: 'var(--secondary)' }} />
             </Button>
-            <Button variant="text" style={{ width: '32px', height: '32px', padding: 0, minWidth: '32px' }}>
+            <Button variant="text" style={{ width: '32px', height: '32px', padding: '8px', minWidth: '32px' }}>
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ color: 'var(--secondary)' }}>
                 <rect x="3" y="3" width="7" height="7" />
                 <rect x="14" y="3" width="7" height="7" />
@@ -1145,78 +1366,116 @@ export default function MyJourneys({ onOpenNavigation }: MyJourneysProps) {
           </div>
         </div>
 
-        {/* Table */}
-        <div style={{ overflowX: 'auto', width: '100%', position: 'relative', borderRadius: 'var(--radius-lg)', boxShadow: 'var(--shadow-sm)', border: '1px solid var(--border-primary)', backgroundColor: 'var(--bg-primary)' }}>
-          <style>{`
-             table[data-slot="table"] th:first-child,
-             table[data-slot="table"] td:first-child {
-               position: sticky;
-               left: 0;
-               z-index: 10;
-               background-color: var(--bg-primary);
-               width: 48px !important;
-               min-width: 48px !important;
-               max-width: 48px !important;
-             }
-             table[data-slot="table"] thead th:first-child {
-               background-color: var(--bg-secondary);
-               z-index: 11;
-             }
-             table[data-slot="table"] th:last-child,
-             table[data-slot="table"] td:last-child {
-               position: sticky;
-               right: 0;
-               z-index: 10;
-               background-color: var(--bg-primary);
-               width: 100px !important;
-               min-width: 100px !important;
-               max-width: 100px !important;
-             }
-             table[data-slot="table"] thead th:last-child {
-               background-color: var(--bg-secondary);
-               z-index: 11;
-             }
-             table[data-slot="table"] thead th:not(:first-child):not(:last-child),
-             table[data-slot="table"] tbody td:not(:first-child):not(:last-child) {
-               width: 200px !important;
-               min-width: 200px !important;
-               max-width: 200px !important;
-             }
-             table[data-slot="table"] thead th {
-               height: 72px;
-               padding: var(--space-5);
-               background-color: var(--bg-secondary);
-               text-align: left !important;
-               vertical-align: middle !important;
-             }
-             table[data-slot="table"] thead th:not(:first-child):not(:last-child) {
-               padding-left: var(--space-5) !important;
-             }
-             table[data-slot="table"] thead th:not(:first-child):not(:last-child) span,
-             table[data-slot="table"] thead th:not(:first-child):not(:last-child) > * {
-               padding-left: 0 !important;
-               margin-left: 0 !important;
+        {/* Table or Card View */}
+        {!isMobile ? (
+          <div
+            className="journeys-table-wrapper"
+            style={{
+              overflowX: 'auto',
+              width: '100%',
+              position: 'relative',
+              borderRadius: 'var(--radius-lg)',
+              boxShadow: 'var(--shadow-sm)',
+              border: '1px solid var(--border-primary)',
+              backgroundColor: 'var(--bg-primary)'
+            }}
+          >
+            <style>{`
+              /* Remove Tailwind padding on table headers */
+              .journeys-table-wrapper table[data-slot="table"] th {
+                text-align: left !important;
+                padding-top: 16px !important;
+                padding-bottom: 16px !important;
+                padding-left: 0 !important;
+                padding-right: 0 !important;
+                height: auto !important;
+                box-sizing: border-box !important;
+                background-color: #F9FAFB !important;
+                font-weight: 600 !important;
+                color: #4B5563 !important;
+              }
+              
+              /* First column header and cells - ensure checkbox is visible */
+              .journeys-table-wrapper table[data-slot="table"] th:first-child,
+              .journeys-table-wrapper table[data-slot="table"] td:first-child {
+                padding: 0 !important;
+                width: 48px !important;
+                min-width: 48px !important;
+                max-width: 48px !important;
+              }
+              
+              /* Ensure checkbox wrapper has proper width */
+              .journeys-table-wrapper table[data-slot="table"] th:first-child > div,
+              .journeys-table-wrapper table[data-slot="table"] td:first-child > div {
+                display: flex !important;
+                align-items: center !important;
+                justify-content: center !important;
+                gap: var(--space-2) !important;
+                width: 100% !important;
+              }
+              
+              /* Ensure checkbox has proper width */
+              .journeys-table-wrapper table[data-slot="table"] th:first-child [data-slot="checkbox"],
+              .journeys-table-wrapper table[data-slot="table"] td:first-child [data-slot="checkbox"] {
+                width: 16px !important;
+                min-width: 16px !important;
+                height: 16px !important;
+                min-height: 16px !important;
+                flex-shrink: 0 !important;
+              }
+              
+              /* Ensure checkbox wrapper div has width */
+              .journeys-table-wrapper table[data-slot="table"] th:first-child > div > div:first-child,
+              .journeys-table-wrapper table[data-slot="table"] td:first-child > div > div:first-child {
+                width: 16px !important;
+                min-width: 16px !important;
+                height: 16px !important;
+                min-height: 16px !important;
+                flex-shrink: 0 !important;
+                display: flex !important;
+              }
+
+              /* Remove padding on table cells */
+              .journeys-table-wrapper table[data-slot="table"] td {
+                padding: 16px !important;
+                box-sizing: border-box !important;
+              }
+              
+              /* Truncate text in table cells - prevent wrapping to second line */
+              .journeys-table-wrapper table[data-slot="table"] td {
+                overflow: hidden !important;
+              }
+              
+              /* Force truncation on first child div in cells (main text content) */
+              .journeys-table-wrapper table[data-slot="table"] td > div[style*="flexDirection"][style*="column"] > div:first-child {
+                white-space: nowrap !important;
+                overflow: hidden !important;
+                text-overflow: ellipsis !important;
                display: block !important;
-             }
-             table[data-slot="table"] tbody td:not(:first-child):not(:last-child) {
-               padding-left: var(--space-5) !important;
-               padding-right: var(--space-5) !important;
-               padding-top: var(--space-5) !important;
-               padding-bottom: var(--space-5) !important;
-             }
-             table[data-slot="table"] tbody td:not(:first-child):not(:last-child) > div {
-               padding-left: var(--space-4) !important;
-               margin-left: 0 !important;
-             }
-             table[data-slot="table"] tbody tr {
-               transition: background-color var(--transition-fast);
-             }
-             table[data-slot="table"] tbody tr:hover {
-               background-color: var(--surface-hover);
+                max-width: 100% !important;
+                -webkit-line-clamp: 1 !important;
+                -webkit-box-orient: vertical !important;
+                display: -webkit-box !important;
+              }
+              
+              /* Override any webkit-box display that allows multiple lines */
+              .journeys-table-wrapper table[data-slot="table"] td > div > div[style*="-webkit-box"] {
+                -webkit-line-clamp: 1 !important;
+                white-space: nowrap !important;
+                display: block !important;
              }
            `}</style>
-          <Table columns={columns} data={activeFilters.size > 0 ? filteredJourneys : journeys} />
-        </div>
+            <Table
+              columns={columns}
+              data={activeFilters.size > 0 ? filteredJourneys : journeys}
+              className="journeys-table"
+            />
+          </div>
+        ) : (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-3)' }}>
+            {(activeFilters.size > 0 ? filteredJourneys : journeys).map(journey => renderJourneyCard(journey))}
+          </div>
+        )}
       </div>
     </div>
   );

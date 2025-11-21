@@ -10,6 +10,7 @@ import {
   routeToSectionId,
   sectionIdToRoute,
   sectionLabelRouteMap,
+  REDIRECT_ROUTES,
 } from './navigation/sections';
 
 const COMPONENT_ROUTE = '/components';
@@ -21,6 +22,10 @@ const normalizeRoute = (rawPath: string | null | undefined) => {
   const lowercase = rawPath.toLowerCase();
   const base = lowercase.split('?')[0]?.split('#')[0] ?? '';
   const trimmed = base.replace(/\/+$/, '') || '/';
+
+  if (REDIRECT_ROUTES.has(trimmed)) {
+    return REDIRECT_ROUTES.get(trimmed)!;
+  }
 
   if (trimmed === '/' || trimmed === '') {
     return DEFAULT_ROUTE;
@@ -51,6 +56,12 @@ export default function App() {
   useEffect(() => {
     document.documentElement.className = theme;
   }, [theme]);
+
+  useEffect(() => {
+    if (currentRoute !== window.location.pathname) {
+      window.history.replaceState({}, '', currentRoute);
+    }
+  }, [currentRoute]);
 
   useEffect(() => {
     const handlePopState = () => {

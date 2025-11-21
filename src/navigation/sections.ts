@@ -4,10 +4,10 @@ export type NavigationSectionShape = (typeof DEFAULT_NAVIGATION_SECTIONS)[number
 
 type BaseSubCategoryItem = NavigationSectionShape['subCategories'] extends Array<infer Category>
   ? Category extends { items: infer Items }
-    ? Items extends Array<infer Item>
-      ? Item
-      : never
-    : never
+  ? Items extends Array<infer Item>
+  ? Item
+  : never
+  : never
   : never;
 
 type AppNavigationSubCategoryItem = BaseSubCategoryItem & { route: string };
@@ -275,3 +275,29 @@ export const sectionLabelRouteMap = new Map<string, string>(
 export const sectionIdToRoute = new Map<string, string>(
   APP_NAVIGATION_SECTIONS.map((section) => [section.id, section.route]),
 );
+
+export const REDIRECT_ROUTES = new Map<string, string>();
+
+APP_NAVIGATION_SECTIONS.forEach((section) => {
+  if (section.subCategories?.length) {
+    let targetRoute: string | undefined;
+
+    // Find active item
+    for (const category of section.subCategories) {
+      const activeItem = category.items.find((item) => (item as any).status === 'active');
+      if (activeItem) {
+        targetRoute = activeItem.route;
+        break;
+      }
+    }
+
+    // Fallback to first item
+    if (!targetRoute && section.subCategories[0]?.items?.length) {
+      targetRoute = section.subCategories[0].items[0].route;
+    }
+
+    if (targetRoute) {
+      REDIRECT_ROUTES.set(section.route, targetRoute);
+    }
+  }
+});
