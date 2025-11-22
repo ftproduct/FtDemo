@@ -10,7 +10,8 @@ import {
   DatePicker,
   Card,
   Divider,
-  SegmentedTabs
+  SegmentedTabs,
+  Checkbox
 } from 'ft-design-system/ai';
 import { type Journey } from '../../../api/journeys';
 import '../../../styles/globals.css';
@@ -476,6 +477,33 @@ export default function MyJourneys({ onOpenNavigation }: MyJourneysProps) {
           min-width: fit-content !important;
           width: fit-content !important;
         }
+        /* Remove relative and w-full from Dropdown wrapper */
+        .my-journeys-container [data-slot="dropdown"] {
+          position: static !important;
+          width: auto !important;
+        }
+        .my-journeys-container [data-slot="dropdown"] > div.relative {
+          position: static !important;
+          width: auto !important;
+        }
+        .my-journeys-container [data-slot="dropdown"] > div.w-full {
+          width: auto !important;
+        }
+        .my-journeys-container div.relative.w-full[data-size] {
+          position: static !important;
+          width: auto !important;
+        }
+        /* Input border - set to 1px */
+        .my-journeys-container input[type="text"][data-size],
+        .my-journeys-container input[type="text"][id^="input-"] {
+          border-width: 1px !important;
+        }
+        /* Button height - match Input height */
+        .my-journeys-container button[data-size="md"][aria-label="Add Journey"],
+        .my-journeys-container button[aria-label="Add Journey"] {
+          height: var(--component-height-md) !important;
+          min-height: var(--component-height-md) !important;
+        }
       `}</style>
         {/* Title Bar + Filter Bar */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingTop: '20px', paddingBottom: '20px' }}>
@@ -803,89 +831,173 @@ export default function MyJourneys({ onOpenNavigation }: MyJourneysProps) {
             }}
           >
             <style>{`
-              /* Remove Tailwind padding on table headers */
-              .journeys-table-wrapper table[data-slot="table"] th {
-                text-align: left !important;
-                padding-top: 16px !important;
-                padding-bottom: 16px !important;
-                padding-left: 0 !important;
-                padding-right: 0 !important;
-                height: auto !important;
-                box-sizing: border-box !important;
-                background-color: #F8F8F9 !important;
-                font-weight: 600 !important;
-                color: var(--secondary) !important;
-              }
-              
-              /* First column header and cells - ensure checkbox is visible */
-              .journeys-table-wrapper table[data-slot="table"] th:first-child,
-              .journeys-table-wrapper table[data-slot="table"] td:first-child {
-                padding: 0 !important;
-                width: 48px !important;
-                min-width: 48px !important;
-                max-width: 48px !important;
-              }
-              
-              /* Ensure checkbox wrapper has proper width */
-              .journeys-table-wrapper table[data-slot="table"] th:first-child > div,
-              .journeys-table-wrapper table[data-slot="table"] td:first-child > div {
-                display: flex !important;
-                align-items: center !important;
-                justify-content: center !important;
-                gap: var(--space-2) !important;
+              /* Table structure - ensure proper row and cell alignment */
+              .journeys-table-wrapper table[data-slot="table"] {
+                border-collapse: collapse !important;
                 width: 100% !important;
               }
               
-              /* Ensure checkbox has proper width */
-              .journeys-table-wrapper table[data-slot="table"] th:first-child [data-slot="checkbox"],
-              .journeys-table-wrapper table[data-slot="table"] td:first-child [data-slot="checkbox"] {
-                width: 16px !important;
-                min-width: 16px !important;
-                height: 16px !important;
-                min-height: 16px !important;
-                flex-shrink: 0 !important;
+              /* Table rows - bottom border for each row */
+              .journeys-table-wrapper table[data-slot="table"] tbody tr {
+                border-bottom: 1px solid var(--border-primary) !important;
+                display: table-row !important;
               }
               
-              /* Ensure checkbox wrapper div has width */
-              .journeys-table-wrapper table[data-slot="table"] th:first-child > div > div:first-child,
-              .journeys-table-wrapper table[data-slot="table"] td:first-child > div > div:first-child {
-                width: 16px !important;
-                min-width: 16px !important;
-                height: 16px !important;
-                min-height: 16px !important;
-                flex-shrink: 0 !important;
-                display: flex !important;
+              /* Header row - bottom border */
+              .journeys-table-wrapper table[data-slot="table"] thead tr {
+                border-bottom: 1px solid var(--border-primary) !important;
               }
-
-              /* Remove padding on table cells */
+              
+              /* Table headers - override Tailwind padding classes */
+              .journeys-table-wrapper table[data-slot="table"] th,
+              .journeys-table-wrapper table[data-slot="table"] th.py-\[20px\],
+              .journeys-table-wrapper table[data-slot="table"] th[class*="py-"],
+              .journeys-table-wrapper table[data-slot="table"] th[class*="px-"] {
+                text-align: left !important;
+                padding-top: 12px !important;
+                padding-bottom: 12px !important;
+                padding-left: 8px !important;
+                padding-right: 16px !important;
+                background-color: #F8F8F9 !important;
+                font-weight: 600 !important;
+                color: var(--secondary) !important;
+                vertical-align: top !important;
+                border: none !important;
+              }
+              
+              /* Table cells - consistent padding and alignment */
               .journeys-table-wrapper table[data-slot="table"] td {
-                padding: 16px !important;
+                padding: 12px 16px !important;
+                padding-left: 8px !important;
+                vertical-align: top !important;
+                border: none !important;
                 box-sizing: border-box !important;
-              }
-              
-              /* Truncate text in table cells - prevent wrapping to second line */
-              .journeys-table-wrapper table[data-slot="table"] td {
                 overflow: hidden !important;
               }
               
-              /* Force truncation on first child div in cells (main text content) */
-              .journeys-table-wrapper table[data-slot="table"] td > div[style*="flexDirection"][style*="column"] > div:first-child {
+              /* Wrapper divs inside cells - allow flex column layout */
+              .journeys-table-wrapper table[data-slot="table"] td > div {
+                overflow: visible !important;
+                min-width: 0 !important;
+                width: 100% !important;
+              }
+              
+              /* All direct children of wrapper divs - MUST truncate */
+              .journeys-table-wrapper table[data-slot="table"] td > div > * {
+                overflow: hidden !important;
+                text-overflow: ellipsis !important;
+                white-space: nowrap !important;
+                max-width: 100% !important;
+                min-width: 0 !important;
+                display: block !important;
+              }
+              
+              /* Wrapper divs with truncation styles - ensure they work */
+              .journeys-table-wrapper table[data-slot="table"] td > div > div[style*="overflow"][style*="hidden"] {
+                overflow: hidden !important;
+                text-overflow: ellipsis !important;
+                white-space: nowrap !important;
+                max-width: 100% !important;
+                min-width: 0 !important;
+                display: block !important;
+              }
+              
+              /* All content inside truncation wrappers - must truncate */
+              .journeys-table-wrapper table[data-slot="table"] td > div > div[style*="overflow"][style*="hidden"] > * {
+                overflow: hidden !important;
+                text-overflow: ellipsis !important;
+                white-space: nowrap !important;
+                max-width: 100% !important;
+                min-width: 0 !important;
+              }
+              
+              /* Buttons inside cells - truncate but keep inline-block */
+              .journeys-table-wrapper table[data-slot="table"] td button {
+                display: inline-block !important;
+                overflow: hidden !important;
+                text-overflow: ellipsis !important;
+                white-space: nowrap !important;
+                max-width: 100% !important;
+                vertical-align: top !important;
+              }
+              
+              /* All text elements - force no wrapping */
+              .journeys-table-wrapper table[data-slot="table"] td span,
+              .journeys-table-wrapper table[data-slot="table"] td p,
+              .journeys-table-wrapper table[data-slot="table"] td a {
                 white-space: nowrap !important;
                 overflow: hidden !important;
                 text-overflow: ellipsis !important;
-               display: block !important;
                 max-width: 100% !important;
-                -webkit-line-clamp: 1 !important;
-                -webkit-box-orient: vertical !important;
-                display: -webkit-box !important;
               }
               
-              /* Override any webkit-box display that allows multiple lines */
-              .journeys-table-wrapper table[data-slot="table"] td > div > div[style*="-webkit-box"] {
-                -webkit-line-clamp: 1 !important;
+              /* Nested elements - all must truncate */
+              .journeys-table-wrapper table[data-slot="table"] td * {
+                max-width: 100% !important;
+              }
+              
+              /* TableCellText and TableCellItem - ensure truncation at component level */
+              .journeys-table-wrapper table[data-slot="table"] td [class*="TableCell"],
+              .journeys-table-wrapper table[data-slot="table"] td [data-slot] {
+                overflow: hidden !important;
+                text-overflow: ellipsis !important;
                 white-space: nowrap !important;
+                max-width: 100% !important;
                 display: block !important;
-             }
+                min-width: 0 !important;
+              }
+              
+              /* All nested content inside TableCell components */
+              .journeys-table-wrapper table[data-slot="table"] td [class*="TableCell"] *,
+              .journeys-table-wrapper table[data-slot="table"] td [data-slot] * {
+                overflow: hidden !important;
+                text-overflow: ellipsis !important;
+                white-space: nowrap !important;
+                max-width: 100% !important;
+              }
+              
+              /* Flex row containers - truncate content */
+              .journeys-table-wrapper table[data-slot="table"] td > div[style*="flexDirection"][style*="row"] > * {
+                overflow: hidden !important;
+                text-overflow: ellipsis !important;
+                white-space: nowrap !important;
+                max-width: 100% !important;
+                min-width: 0 !important;
+              }
+              
+              /* First column (checkbox column) - fixed width */
+              .journeys-table-wrapper table[data-slot="table"] th:first-child,
+              .journeys-table-wrapper table[data-slot="table"] td:first-child {
+                width: 48px !important;
+                min-width: 48px !important;
+                max-width: 48px !important;
+                padding: 12px 8px !important;
+                white-space: normal !important;
+              }
+              
+              /* Checkbox - fix width and remove relative */
+              .journeys-table-wrapper table[data-slot="table"] div.relative.shrink-0,
+              .journeys-table-wrapper table[data-slot="table"] div[class*="relative"][class*="shrink-0"],
+              .journeys-table-wrapper table[data-slot="table"] div.relative[class*="w-5"],
+              .journeys-table-wrapper table[data-slot="table"] div.relative[class*="h-5"] {
+                position: static !important;
+                width: 20px !important;
+                min-width: 20px !important;
+                height: 20px !important;
+                min-height: 20px !important;
+                flex-shrink: 0 !important;
+              }
+              
+              /* Actions column - make buttons circular */
+              .journeys-table-wrapper table[data-slot="table"] td:last-child button[data-slot="button"],
+              .journeys-table-wrapper table[data-slot="table"] td:last-child button[data-size="md"] {
+                border-radius: 50% !important;
+                width: 32px !important;
+                height: 32px !important;
+                min-width: 32px !important;
+                min-height: 32px !important;
+                padding: 0 !important;
+              }
            `}</style>
             <Table
               columns={columns}
