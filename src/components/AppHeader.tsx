@@ -4,15 +4,10 @@ import svgPaths from "../imports/svg-0p0qopiq1k";
 
 function Menu() {
   return (
-    <div className="relative shrink-0" data-name="Menu" style={{ width: '28px', height: '28px' }}>
-      <svg className="block" style={{ width: '28px', height: '28px' }} fill="none" preserveAspectRatio="none" viewBox="0 0 24 24">
+    <div className="relative shrink-0" data-name="Menu" style={{ width: '28px', height: '28px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <svg className="block" style={{ width: '24px', height: '24px' }} fill="none" preserveAspectRatio="none" viewBox="0 0 24 24">
         <g id="Menu">
-          <g id="Vector">
-            <path d={svgPaths.p1cfa1bc0} stroke="var(--primary)" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" />
-            <path d={svgPaths.p2cfdb900} stroke="var(--primary)" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" />
-            <path d={svgPaths.p17f25d40} stroke="var(--primary)" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" />
-            <path d={svgPaths.p15fb5e00} stroke="var(--primary)" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" />
-          </g>
+          <path d="M4 6H20M4 12H20M4 18H20" stroke="var(--primary)" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" />
         </g>
       </svg>
     </div>
@@ -79,8 +74,8 @@ function CompanyName() {
 
 function Logo({ onOpenNavigation }: { onOpenNavigation?: () => void }) {
   return (
-    <div 
-      className="content-stretch flex items-center relative shrink-0" 
+    <div
+      className="content-stretch flex items-center relative shrink-0"
       data-name="Logo"
       style={{ gap: 'var(--space-5)' }}
     >
@@ -116,8 +111,8 @@ function Bell() {
 
 function NotificationContainer() {
   return (
-    <div 
-      className="content-stretch flex items-center relative shrink-0" 
+    <div
+      className="content-stretch flex items-center relative shrink-0"
       data-name="Notification Container"
       style={{ gap: 'var(--space-9)' }}
     >
@@ -156,31 +151,31 @@ function NotificationIcons() {
   }, [isUserProfileOpen]);
 
   return (
-    <div 
+    <div
       ref={profileRef}
-      className="content-stretch flex items-center relative shrink-0" 
+      className="content-stretch flex items-center relative shrink-0"
       data-name="Notification Icons"
       style={{ gap: 'var(--space-4)', overflow: 'visible', zIndex: 1200 }}
     >
       <NotificationContainer />
       <div style={{ position: 'relative' }}>
-        <UserProfile 
+        <UserProfile
           userName="John Doe"
           userRole="Administrator"
           userLocation="Mumbai, India"
           company={{
-            name: 'ft',
-            displayName: 'Freight Tiger'
+            name: 'mdc',
+            displayName: 'MDC Labs'
           }}
           onClick={() => setIsUserProfileOpen((prev) => !prev)}
         />
-        <UserProfileDropdown 
+        <UserProfileDropdown
           userName="John Doe"
           userRole="Administrator"
           userLocation="Mumbai, India"
           userBadge="Admin"
           isOpen={isUserProfileOpen}
-          onMenuItemClick={(item) => {
+          onMenuItemClick={(item: string) => {
             console.log('Menu item clicked:', item);
             if (item === 'logout') {
               // Handle logout
@@ -199,18 +194,18 @@ interface AppHeaderProps {
 
 export default function AppHeader({ onOpenNavigation }: AppHeaderProps) {
   return (
-    <div 
-      className="relative size-full" 
+    <div
+      className="relative size-full"
       data-name="App header"
       style={{ backgroundColor: 'var(--bg-secondary)', overflow: 'visible', zIndex: 100 }}
     >
-      <div 
-        aria-hidden="true" 
+      <div
+        aria-hidden="true"
         className="absolute inset-0 pointer-events-none border-solid border-[0px_0px_1px]"
         style={{ borderColor: 'var(--border-primary)' }}
       />
       <div className="flex flex-row items-center size-full" style={{ overflow: 'visible' }}>
-        <div 
+        <div
           className="box-border content-stretch flex items-center justify-between relative size-full"
           style={{
             paddingLeft: 'var(--space-5)',

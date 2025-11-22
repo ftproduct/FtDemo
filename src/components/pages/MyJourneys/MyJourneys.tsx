@@ -5,48 +5,25 @@ import {
   Button,
   Input,
   Table,
-  Checkbox,
   Dropdown,
   QuickFilters,
   DatePicker,
   Card,
   Divider,
-  SegmentedTabs,
-  type TableColumn
+  SegmentedTabs
 } from 'ft-design-system/ai';
-import { type Journey } from '../../api/journeys';
-import '../../styles/globals.css';
-import { mockJourneys } from '../../data/mockJourneys';
-import AppHeader from '../AppHeader';
-import {
-  Home,
-  LayoutList,
-  Map,
-  RefreshCw,
-  Share2,
-  Download,
-  Upload,
-  Settings,
-  Filter,
-  ChevronLeft,
-  ChevronRight,
-  Calendar,
-  Search,
-  MoreHorizontal,
-  ArrowRight,
-  Clock,
-  MapPin,
-  CheckCircle2,
-  AlertCircle,
-  Star,
-  Signal,
-  SignalHigh,
-  SignalMedium,
-  SignalLow,
-  SignalZero,
-  Truck,
-  Package
-} from 'lucide-react';
+import { type Journey } from '../../../api/journeys';
+import '../../../styles/globals.css';
+import { mockJourneys } from '../../../data/mockJourneys';
+import AppHeader from '../../AppHeader';
+import { Icon } from 'ft-design-system';
+
+// Import extracted modules
+import { TAB_CONFIG } from './constants';
+import { createTableColumns } from './constants/tableColumns';
+import { useTabCounts, useFilterCounts } from './hooks/useJourneyCounts';
+import { useJourneyFilters } from './hooks/useJourneyFilters';
+import { getTripIcon, getAlertLabel } from './utils/journeyHelpers';
 
 interface MyJourneysProps {
   onOpenNavigation: () => void;
@@ -54,7 +31,6 @@ interface MyJourneysProps {
 
 export default function MyJourneys({ onOpenNavigation }: MyJourneysProps) {
   const [journeys, setJourneys] = useState<Journey[]>([]);
-  const [filteredJourneys, setFilteredJourneys] = useState<Journey[]>([]);
   const [selectedTab, setSelectedTab] = useState(3); // In Transit is default
   const [totalCount, setTotalCount] = useState(56);
   const [viewMode, setViewMode] = useState<'list' | 'map'>('list');
@@ -73,51 +49,19 @@ export default function MyJourneys({ onOpenNavigation }: MyJourneysProps) {
 
 
 
-  // Calculate counts from actual data
-  const calculateTabCounts = React.useMemo(() => {
-    const allJourneys = journeys.length > 0 ? journeys : mockJourneys;
-    return {
-      planned: allJourneys.filter((j: Journey) => j.tab_status === 'planned').length,
-      en_route_to_loading: allJourneys.filter((j: Journey) => j.tab_status === 'en_route_to_loading').length,
-      at_loading: allJourneys.filter((j: Journey) => j.tab_status === 'at_loading').length,
-      in_transit: allJourneys.filter((j: Journey) => j.tab_status === 'in_transit').length,
-      at_unloading: allJourneys.filter((j: Journey) => j.tab_status === 'at_unloading').length,
-      in_return: allJourneys.filter((j: Journey) => j.tab_status === 'in_return').length,
-      delivered: allJourneys.filter((j: Journey) => j.tab_status === 'delivered').length
-    };
-  }, [journeys]);
 
-  const calculateFilterCounts = React.useMemo(() => {
-    const allJourneys = journeys.length > 0 ? journeys : mockJourneys;
-    const delayed = allJourneys.filter((j: Journey) => j.sla_status === 'delayed');
-    const longStoppage = allJourneys.filter((j: Journey) => j.alert_type === 'long_stoppage').length;
-    const routeDeviation = allJourneys.filter((j: Journey) => j.alert_type === 'route_deviation').length;
-
-    return {
-      stoppage: longStoppage,
-      deviation: routeDeviation,
-      delayed: delayed.length,
-      '0-6hrs': delayed.length, // For demo, using delayed count
-      '6-12hrs': 0, // Would need actual delay hours in real data
-      '12plus': 0, // Would need actual delay hours in real data
-      expiring: 0, // Would need e-way bill data
-      expired: 0, // Would need e-way bill data
-      '6hrs': 0, // Would need ETA data
-      '12hrs': 0, // Would need ETA data
-      '24plus': 0 // Would need ETA data
-    };
-  }, [journeys]);
+  // Use extracted hooks for calculations
+  const allJourneys = journeys.length > 0 ? journeys : mockJourneys;
+  const calculateTabCounts = useTabCounts(allJourneys);
+  const calculateFilterCounts = useFilterCounts(allJourneys);
 
   // Tabs configuration with icons - using dynamic counts
-  const tabs = React.useMemo(() => [
-    { label: 'Planned', badge: true, badgeCount: calculateTabCounts.planned, icon: <Calendar style={{ width: '16px', height: '16px' }} /> },
-    { label: 'En Route to Loading', badge: true, badgeCount: calculateTabCounts.en_route_to_loading, icon: <Truck style={{ width: '16px', height: '16px' }} /> },
-    { label: 'At Loading', badge: true, badgeCount: calculateTabCounts.at_loading, icon: <Package style={{ width: '16px', height: '16px' }} /> },
-    { label: 'In Transit', badge: true, badgeCount: calculateTabCounts.in_transit, icon: <MapPin style={{ width: '16px', height: '16px' }} /> },
-    { label: 'At Unloading', badge: true, badgeCount: calculateTabCounts.at_unloading, icon: <Package style={{ width: '16px', height: '16px' }} /> },
-    { label: 'In Return', badge: true, badgeCount: calculateTabCounts.in_return, icon: <RefreshCw style={{ width: '16px', height: '16px' }} /> },
-    { label: 'Delivered', badge: true, badgeCount: calculateTabCounts.delivered, icon: <CheckCircle2 style={{ width: '16px', height: '16px' }} /> }
-  ], [calculateTabCounts]);
+  const tabs = React.useMemo(() => TAB_CONFIG.map(config => ({
+    label: config.label,
+    badge: true,
+    badgeCount: calculateTabCounts[config.status as keyof typeof calculateTabCounts] as number,
+    icon: <Icon name={config.icon} style={{ width: '16px', height: '16px' }} />
+  })), [calculateTabCounts]);
 
   // Calculate which tabs fit and which overflow - measure from hidden container
   const calculateTabs = useCallback(() => {
@@ -253,53 +197,8 @@ export default function MyJourneys({ onOpenNavigation }: MyJourneysProps) {
   }, []);
 
 
-  // Filter journeys based on active filters
-  useEffect(() => {
-    let filtered = [...journeys];
-
-    if (activeFilters.size > 0) {
-      filtered = journeys.filter((journey: Journey) => {
-        // Check each active filter
-        for (const filterKey of activeFilters) {
-          const [filterId, optionId] = filterKey.split(':');
-
-          // Single option filters
-          if (filterId === 'stoppage' && journey.alert_type === 'long_stoppage') {
-            return true;
-          }
-          if (filterId === 'deviation' && journey.alert_type === 'route_deviation') {
-            return true;
-          }
-
-          // Multi-option filters
-          if (filterId === 'delayed') {
-            if (journey.sla_status === 'delayed') {
-              // Check specific delay ranges if option is selected
-              if (optionId === '0-6hrs' || optionId === '6-12hrs' || optionId === '12plus') {
-                // For demo, if delayed, show it (in real app, check actual delay hours)
-                return true;
-              }
-              // If no specific option, show all delayed
-              if (!optionId) return true;
-            }
-          }
-
-          if (filterId === 'eway') {
-            // E Way bill filters - for demo, show all if selected
-            return true;
-          }
-
-          if (filterId === 'eta') {
-            // ETA filters - for demo, show all if selected
-            return true;
-          }
-        }
-        return false;
-      });
-    }
-
-    setFilteredJourneys(filtered);
-  }, [journeys, activeFilters]);
+  // Use extracted filter hook
+  const filteredJourneys = useJourneyFilters(journeys, activeFilters);
 
   // Quick Filters - Single and Multi-option filters - using dynamic counts
   const quickFilters = [
@@ -341,508 +240,31 @@ export default function MyJourneys({ onOpenNavigation }: MyJourneysProps) {
     }
   ];
 
-  // Table columns
-  const columns: TableColumn<Journey>[] = [
-    {
-      key: 'select',
-      title: (
-        <div style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          gap: 'var(--space-2)',
-          width: '100%',
-          padding: '0 12px'
-        }}>
-          <div style={{ width: '16px', height: '16px', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <Checkbox
-              checked={selectAll}
-              onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                setSelectAll(event.target.checked);
-                if (event.target.checked) {
-                  const allIds = (activeFilters.size > 0 ? filteredJourneys : journeys).map((j: Journey) => j.journey_id);
-                  setSelectedJourneyIds(allIds);
-                } else {
-                  setSelectedJourneyIds([]);
-                }
-              }}
-            />
-          </div>
-          <Star style={{ width: '16px', height: '16px', color: 'var(--secondary)', flexShrink: 0 }} />
-        </div>
-      ) as any,
-      width: 48 as any,
-      render: (_: any, record: Journey) => (
-        <div style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          gap: 'var(--space-2)',
-          width: '100%',
-          padding: '0 12px'
-        }}>
-          <div style={{ width: '16px', height: '16px', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <Checkbox
-              checked={selectedJourneyIds.includes(record.journey_id)}
-              onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                setSelectedJourneyIds((prev: number[]) => {
-                  if (event.target.checked) {
-                    return Array.from(new Set([...prev, record.journey_id]));
-                  }
-                  return prev.filter((id: number) => id !== record.journey_id);
-                });
-              }}
-            />
-          </div>
-          <Star style={{ width: '16px', height: '16px', color: 'var(--secondary)', flexShrink: 0 }} />
-        </div>
-      )
-    },
-    {
-      key: 'feed_unique_id',
-      title: 'Feed Unique ID',
-      width: 200 as any,
-      render: (_: any, record: Journey) => (
-        <div style={{
-          minWidth: 0,
-          display: 'flex',
-          flexDirection: 'column',
-          gap: 'var(--space-2)',
-          padding: 0
-        }}>
-          <div style={{
-            minWidth: 0,
-            overflow: 'hidden',
-            textOverflow: 'ellipsis',
-            whiteSpace: 'nowrap',
-            lineHeight: 'var(--line-height-normal)',
-            fontSize: 'var(--font-size-sm)',
-            color: 'var(--primary)'
-          }}>
-            {record.feed_unique_id}
-          </div>
-          <Button variant="link" style={{
-            padding: 0,
-            height: 'auto',
-            minWidth: 0,
-            fontSize: 'var(--font-size-sm)',
-            color: '#1890FF',
-            fontWeight: '500'
-          }}>View ID's</Button>
-        </div>
-      )
-    },
-    {
-      key: 'from',
-      title: 'From',
-      width: 200 as any,
-      render: (_: any, record: Journey) => (
-        <div style={{
-          minWidth: 0,
-          display: 'flex',
-          flexDirection: 'column',
-          gap: 'var(--space-2)',
-          padding: 0
-        }}>
-          <div style={{
-            minWidth: 0,
-            display: 'flex',
-            alignItems: 'center',
-            gap: 'var(--space-2)',
-            flexWrap: 'wrap',
-            lineHeight: 'var(--line-height-normal)'
-          }}>
-            <span style={{
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap',
-              fontSize: 'var(--font-size-sm)',
-              color: 'var(--primary)',
-              flex: 1,
-              minWidth: 0
-            }}>
-              {record.origin_display}
-            </span>
-            <Badge variant="normal" style={{ alignSelf: 'center', flexShrink: 0, borderRadius: '12px', padding: '2px 8px', fontSize: '11px', fontWeight: 500, backgroundColor: '#F3F4F6', color: '#4B5563' }}>+1P</Badge>
-          </div>
-          <div style={{
-            minWidth: 0,
-            overflow: 'hidden',
-            textOverflow: 'ellipsis',
-            display: '-webkit-box',
-            WebkitLineClamp: 2,
-            WebkitBoxOrient: 'vertical',
-            lineHeight: 'var(--line-height-normal)',
-            fontSize: 'var(--font-size-sm)',
-            color: 'var(--secondary)'
-          }}>
-            {record.origin_company_display}
-          </div>
-        </div>
-      )
-    },
-    {
-      key: 'to',
-      title: 'To',
-      width: 200 as any,
-      render: (_: any, record: Journey) => (
-        <div style={{
-          minWidth: 0,
-          display: 'flex',
-          flexDirection: 'column',
-          gap: 'var(--space-2)',
-          padding: 0
-        }}>
-          <div style={{
-            minWidth: 0,
-            display: 'flex',
-            alignItems: 'center',
-            gap: 'var(--space-2)',
-            flexWrap: 'wrap',
-            lineHeight: 'var(--line-height-normal)'
-          }}>
-            <span style={{
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap',
-              fontSize: 'var(--font-size-sm)',
-              color: 'var(--primary)',
-              flex: 1,
-              minWidth: 0
-            }}>
-              {record.destination_display}
-            </span>
-            <Badge variant="normal" style={{ alignSelf: 'center', flexShrink: 0, borderRadius: '12px', padding: '2px 8px', fontSize: '11px', fontWeight: 500, backgroundColor: '#F3F4F6', color: '#4B5563' }}>+3D</Badge>
-          </div>
-          <div style={{
-            minWidth: 0,
-            overflow: 'hidden',
-            textOverflow: 'ellipsis',
-            display: '-webkit-box',
-            WebkitLineClamp: 2,
-            WebkitBoxOrient: 'vertical',
-            lineHeight: 'var(--line-height-normal)',
-            fontSize: 'var(--font-size-sm)',
-            color: 'var(--secondary)'
-          }}>
-            {record.destination_company_display}
-          </div>
-        </div>
-      )
-    },
-    {
-      key: 'vehicle',
-      title: 'Vehicle Info',
-      width: 200 as any,
-      render: (_: any, record: Journey) => (
-        <div style={{
-          minWidth: 0,
-          display: 'flex',
-          flexDirection: 'column',
-          gap: 'var(--space-2)',
-          padding: 0
-        }}>
-          <div style={{
-            minWidth: 0,
-            overflow: 'hidden',
-            textOverflow: 'ellipsis',
-            whiteSpace: 'nowrap',
-            lineHeight: 'var(--line-height-normal)',
-            fontSize: 'var(--font-size-sm)',
-            color: 'var(--primary)'
-          }}>
-            {record.vehicle_number}
-          </div>
-          <div style={{
-            minWidth: 0,
-            overflow: 'hidden',
-            textOverflow: 'ellipsis',
-            whiteSpace: 'nowrap',
-            lineHeight: 'var(--line-height-normal)',
-            fontSize: 'var(--font-size-sm)',
-            color: 'var(--secondary)'
-          }}>
-            {record.transporter_name}
-          </div>
-        </div>
-      )
-    },
-    {
-      key: 'trip',
-      title: 'Trip Info',
-      width: 200 as any,
-      render: (_: any, record: Journey) => {
-        const getTripIcon = (type: string) => {
-          if (type === 'SIM') {
-            return <SignalHigh style={{ width: '16px', height: '16px', color: 'var(--positive)' }} />;
-          }
-          if (type === 'GPS') {
-            return <MapPin style={{ width: '20px', height: '20px', color: 'var(--neutral)' }} />;
-          }
-          if (type === 'Fastag') {
-            return <div style={{ width: '16px', height: '16px', borderRadius: '2px', background: '#722ed1', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '10px', color: 'white', fontWeight: 600 }}>F</div>;
-          }
-          return null;
-        };
-
-        return (
-          <div style={{
-            minWidth: 0,
-            display: 'flex',
-            flexDirection: 'column',
-            gap: 'var(--space-2)',
-            padding: 0
-          }}>
-            <div style={{
-              minWidth: 0,
-              display: 'flex',
-              alignItems: 'center',
-              gap: 'var(--space-2)',
-              lineHeight: 'var(--line-height-normal)',
-              overflow: 'hidden'
-            }}>
-              <div style={{ flexShrink: 0 }}>{getTripIcon(record.trip_type_display)}</div>
-              <span style={{
-                minWidth: 0,
-                overflow: 'hidden',
-                textOverflow: 'ellipsis',
-                whiteSpace: 'nowrap',
-                fontSize: 'var(--font-size-sm)',
-                color: 'var(--primary)'
-              }}>
-                {record.trip_type_display}
-              </span>
-            </div>
-            <div style={{
-              minWidth: 0,
-              display: 'flex',
-              alignItems: 'center',
-              gap: 'var(--space-2)',
-              lineHeight: 'var(--line-height-normal)',
-              overflow: 'hidden'
-            }}>
-              <CheckCircle2 style={{ width: '14px', height: '14px', color: 'var(--positive)', flexShrink: 0 }} />
-              <span style={{
-                minWidth: 0,
-                overflow: 'hidden',
-                textOverflow: 'ellipsis',
-                whiteSpace: 'nowrap',
-                fontSize: 'var(--font-size-sm)',
-                color: 'var(--primary)'
-              }}>
-                {record.trip_id}
-              </span>
-            </div>
-          </div>
-        );
+  // Table columns - using extracted components
+  const columns = createTableColumns(
+    selectAll,
+    selectedJourneyIds,
+    (checked: boolean) => {
+      setSelectAll(checked);
+      if (checked) {
+        const allIds = (activeFilters.size > 0 ? filteredJourneys : journeys).map((j: Journey) => j.journey_id);
+        setSelectedJourneyIds(allIds);
+      } else {
+        setSelectedJourneyIds([]);
       }
     },
-    {
-      key: 'status',
-      title: 'Status',
-      width: 200 as any,
-      render: (_: any, record: Journey) => (
-        <div style={{
-          minWidth: 0,
-          display: 'flex',
-          flexDirection: 'column',
-          gap: 'var(--space-2)',
-          padding: 0
-        }}>
-          <div style={{
-            minWidth: 0,
-            display: 'flex',
-            alignItems: 'center',
-            gap: 'var(--space-2)',
-            lineHeight: 'var(--line-height-normal)',
-            overflow: 'hidden'
-          }}>
-            <MapPin style={{ width: '20px', height: '20px', color: 'var(--secondary)', flexShrink: 0 }} />
-            <span style={{
-              minWidth: 0,
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap',
-              fontSize: 'var(--font-size-sm)',
-              color: 'var(--primary)'
-            }}>
-              {record.status_display}
-            </span>
-          </div>
-          <div style={{
-            minWidth: 0,
-            display: 'flex',
-            alignItems: 'center',
-            gap: 'var(--space-2)',
-            lineHeight: 'var(--line-height-normal)',
-            overflow: 'hidden'
-          }}>
-            <MapPin style={{ width: '20px', height: '20px', color: 'var(--secondary)', flexShrink: 0 }} />
-            <span style={{
-              minWidth: 0,
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap',
-              fontSize: 'var(--font-size-sm)',
-              color: 'var(--secondary)'
-            }}>
-              {record.current_location_display}
-            </span>
-          </div>
-        </div>
-      )
-    },
-    {
-      key: 'sla',
-      title: 'SLA',
-      width: 200 as any,
-      render: (_: any, record: Journey) => (
-        <div style={{
-          minWidth: 0,
-          display: 'flex',
-          flexDirection: 'column',
-          gap: 'var(--space-2)',
-          padding: 0
-        }}>
-          <div style={{
-            minWidth: 0,
-            display: 'flex',
-            alignItems: 'center',
-            gap: 'var(--space-2)',
-            lineHeight: 'var(--line-height-normal)',
-            overflow: 'hidden'
-          }}>
-            {record.sla_status === 'on_time' ? (
-              <CheckCircle2 style={{ width: '20px', height: '20px', color: '#00C853', flexShrink: 0 }} />
-            ) : (
-              <Clock style={{ width: '20px', height: '20px', color: '#D32F2F', flexShrink: 0 }} />
-            )}
-            <span style={{
-              minWidth: 0,
-              color: record.sla_status === 'on_time' ? '#00C853' : '#D32F2F',
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap',
-              fontSize: 'var(--font-size-sm)',
-              fontWeight: 700
-            }}>
-              {record.sla_status_display}
-            </span>
-          </div>
-          <div style={{
-            minWidth: 0,
-            overflow: 'hidden',
-            textOverflow: 'ellipsis',
-            display: '-webkit-box',
-            WebkitLineClamp: 2,
-            WebkitBoxOrient: 'vertical',
-            lineHeight: 'var(--line-height-normal)',
-            fontSize: 'var(--font-size-sm)',
-            color: 'var(--secondary)'
-          }}>
-            {record.eta_display}
-          </div>
-        </div>
-      )
-    },
-    {
-      key: 'alerts',
-      title: 'Alerts',
-      width: 200 as any,
-      render: (_: any, record: Journey) => {
-        if (!record.alert_type) return null;
-
-        const alertLabels: Record<string, string> = {
-          long_stoppage: 'Long Stoppage',
-          route_deviation: 'Route Deviation',
-          transit_delay: 'Transit Delay'
-        };
-
-        return (
-          <div style={{
-            minWidth: 0,
-            display: 'flex',
-            flexDirection: 'column',
-            gap: 'var(--space-2)',
-            padding: 0
-          }}>
-            <div style={{
-              minWidth: 0,
-              display: 'flex',
-              alignItems: 'center',
-              gap: 'var(--space-2)',
-              flexWrap: 'wrap'
-            }}>
-              <Badge variant="danger" style={{
-                height: '24px',
-                borderRadius: '6px',
-                padding: '4px 8px',
-                fontSize: 'var(--font-size-xs)',
-                fontWeight: 'var(--font-weight-medium)',
-                flexShrink: 0
-              }}>
-                {alertLabels[record.alert_type] || record.alert_type}
-              </Badge>
-              <span style={{
-                minWidth: 0,
-                fontSize: '12px',
-                color: 'var(--secondary)',
-                whiteSpace: 'nowrap'
-              }}>
-                {record.alert_time_display || '1 hour ago'}
-              </span>
-            </div>
-          </div>
-        );
-      }
-    },
-    {
-      key: 'actions',
-      title: 'Actions',
-      width: 100 as any,
-      render: () => (
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 'var(--space-2)', paddingRight: 'var(--space-4)' }}>
-          <div style={{
-            width: '32px',
-            height: '32px',
-            borderRadius: '50%',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            cursor: 'pointer',
-            transition: 'background-color var(--transition-fast)'
-          }}
-            onMouseEnter={(e: React.MouseEvent<HTMLDivElement>) => { e.currentTarget.style.backgroundColor = 'var(--surface-hover)'; }}
-            onMouseLeave={(e: React.MouseEvent<HTMLDivElement>) => { e.currentTarget.style.backgroundColor = 'transparent'; }}
-          >
-            <MoreHorizontal style={{ width: '16px', height: '16px', color: 'var(--secondary)' }} />
-          </div>
-        </div>
-      )
+    (journeyId: number, checked: boolean) => {
+      setSelectedJourneyIds((prev: number[]) => {
+        if (checked) {
+          return Array.from(new Set([...prev, journeyId]));
+        }
+        return prev.filter((id: number) => id !== journeyId);
+      });
     }
-  ];
-
-  // Helper function to get trip icon
-  const getTripIcon = (type: string) => {
-    if (type === 'SIM') {
-      return <SignalHigh style={{ width: '16px', height: '16px', color: 'var(--positive)' }} />;
-    }
-    if (type === 'GPS') {
-      return <MapPin style={{ width: '20px', height: '20px', color: 'var(--neutral)' }} />;
-    }
-    if (type === 'Fastag') {
-      return <div style={{ width: '16px', height: '16px', borderRadius: '2px', background: '#722ed1', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '10px', color: 'white', fontWeight: 600 }}>F</div>;
-    }
-    return null;
-  };
+  );
 
   // Helper function to render journey card
   const renderJourneyCard = (journey: Journey) => {
-    const alertLabels: Record<string, string> = {
-      long_stoppage: 'Long Stoppage',
-      route_deviation: 'Route Deviation',
-      transit_delay: 'Transit Delay'
-    };
 
     return (
       <Card
@@ -870,7 +292,7 @@ export default function MyJourneys({ onOpenNavigation }: MyJourneysProps) {
                   });
                 }}
               />
-              <Star style={{ width: '16px', height: '16px', color: 'var(--secondary)', flexShrink: 0 }} />
+              <Icon name="star" style={{ width: '16px', height: '16px', color: 'var(--secondary)', flexShrink: 0 }} />
               <div style={{ flex: 1 }}>
                 <div style={{ fontSize: 'var(--font-size-sm)', fontWeight: 'var(--font-weight-semibold)', color: 'var(--primary)', marginBottom: 'var(--space-1)' }}>
                   {journey.feed_unique_id}
@@ -891,7 +313,7 @@ export default function MyJourneys({ onOpenNavigation }: MyJourneysProps) {
               onMouseEnter={(e: React.MouseEvent<HTMLDivElement>) => { e.currentTarget.style.backgroundColor = 'var(--surface-hover)'; }}
               onMouseLeave={(e: React.MouseEvent<HTMLDivElement>) => { e.currentTarget.style.backgroundColor = 'transparent'; }}
             >
-              <MoreHorizontal style={{ width: '16px', height: '16px', color: 'var(--secondary)' }} />
+              <Icon name="more" style={{ width: '16px', height: '16px', color: 'var(--secondary)' }} />
             </div>
           </div>
 
@@ -943,7 +365,7 @@ export default function MyJourneys({ onOpenNavigation }: MyJourneysProps) {
                 </span>
               </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2)' }}>
-                <CheckCircle2 style={{ width: '14px', height: '14px', color: 'var(--positive)', flexShrink: 0 }} />
+                <Icon name="check-fill" style={{ width: '14px', height: '14px', color: 'var(--positive)', flexShrink: 0 }} />
                 <span style={{ fontSize: 'var(--font-size-sm)', color: 'var(--primary)' }}>
                   {journey.trip_id}
                 </span>
@@ -956,13 +378,13 @@ export default function MyJourneys({ onOpenNavigation }: MyJourneysProps) {
             <div>
               <div style={{ fontSize: 'var(--font-size-xs)', color: 'var(--secondary)', marginBottom: 'var(--space-1)' }}>Status</div>
               <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2)', marginBottom: 'var(--space-1)' }}>
-                <MapPin style={{ width: '16px', height: '16px', color: 'var(--secondary)', flexShrink: 0 }} />
+                <Icon name="location" style={{ width: '16px', height: '16px', color: 'var(--secondary)', flexShrink: 0 }} />
                 <span style={{ fontSize: 'var(--font-size-sm)', color: 'var(--primary)' }}>
                   {journey.status_display}
                 </span>
               </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2)' }}>
-                <MapPin style={{ width: '16px', height: '16px', color: 'var(--secondary)', flexShrink: 0 }} />
+                <Icon name="location" style={{ width: '16px', height: '16px', color: 'var(--secondary)', flexShrink: 0 }} />
                 <span style={{ fontSize: 'var(--font-size-sm)', color: 'var(--secondary)' }}>
                   {journey.current_location_display}
                 </span>
@@ -972,9 +394,9 @@ export default function MyJourneys({ onOpenNavigation }: MyJourneysProps) {
               <div style={{ fontSize: 'var(--font-size-xs)', color: 'var(--secondary)', marginBottom: 'var(--space-1)' }}>SLA</div>
               <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2)', marginBottom: 'var(--space-1)' }}>
                 {journey.sla_status === 'on_time' ? (
-                  <CheckCircle2 style={{ width: '16px', height: '16px', color: '#00C853', flexShrink: 0 }} />
+                  <Icon name="check-fill" style={{ width: '16px', height: '16px', color: '#00C853', flexShrink: 0 }} />
                 ) : (
-                  <Clock style={{ width: '16px', height: '16px', color: '#D32F2F', flexShrink: 0 }} />
+                  <Icon name="clock" style={{ width: '16px', height: '16px', color: '#D32F2F', flexShrink: 0 }} />
                 )}
                 <span style={{
                   color: journey.sla_status === 'on_time' ? '#00C853' : '#D32F2F',
@@ -1001,7 +423,7 @@ export default function MyJourneys({ onOpenNavigation }: MyJourneysProps) {
                   fontSize: 'var(--font-size-xs)',
                   fontWeight: 'var(--font-weight-medium)'
                 }}>
-                  {alertLabels[journey.alert_type] || journey.alert_type}
+                  {getAlertLabel(journey.alert_type)}
                 </Badge>
                 <span style={{
                   fontSize: '12px',
@@ -1058,8 +480,8 @@ export default function MyJourneys({ onOpenNavigation }: MyJourneysProps) {
         {/* Title Bar + Filter Bar */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingTop: '20px', paddingBottom: '20px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-3)' }}>
-            <Home style={{ width: '28px', height: '28px', color: 'var(--primary)' }} />
-            <h1 style={{ margin: 0, fontSize: 'var(--font-size-xl)', fontWeight: 700, color: '#1F2937', fontFamily: 'var(--font-family-primary)' }}>My Journeys</h1>
+            <Icon name="navigator" style={{ width: '28px', height: '28px', color: 'var(--primary)' }} />
+            <h1 style={{ margin: 0, fontSize: 'var(--font-size-xl)', fontWeight: 600, color: 'var(--primary)', fontFamily: 'var(--font-family-primary)' }}>My Journeys</h1>
           </div>
 
           {/* Filter Bar */}
@@ -1091,7 +513,7 @@ export default function MyJourneys({ onOpenNavigation }: MyJourneysProps) {
               ]}
               placeholder="Direction"
               defaultValue="outbound"
-              style={{ height: 'var(--component-height-md)' }}
+              style={{ height: 'var(--component-height-md)', width: '200px' }}
             />
 
             <Input
@@ -1102,7 +524,7 @@ export default function MyJourneys({ onOpenNavigation }: MyJourneysProps) {
               style={{ width: '300px', flexShrink: 0, height: 'var(--component-height-md)' }}
             />
 
-            <Button variant="primary" icon="calendar" style={{ height: 'var(--component-height-md)', backgroundColor: '#1F2937', color: 'white', borderRadius: '6px' }}>Add Journey</Button>
+            <Button variant="primary" icon="calendar" style={{ height: 'var(--component-height-md)', backgroundColor: 'var(--primary)', color: 'white', borderRadius: '6px' }}>Add Journey</Button>
           </div>
         </div>
 
@@ -1174,8 +596,8 @@ export default function MyJourneys({ onOpenNavigation }: MyJourneysProps) {
                   display: inline-block !important;
                 }
                 [data-slot="tabs-trigger"][data-state="active"] {
-                  box-shadow: inset 0 -2px 0 0 #1F2937 !important;
-                  color: #1F2937 !important;
+                  box-shadow: inset 0 -2px 0 0 var(--primary) !important;
+                  color: var(--primary) !important;
                   font-weight: 600 !important;
                 }
               `}</style>
@@ -1254,11 +676,11 @@ export default function MyJourneys({ onOpenNavigation }: MyJourneysProps) {
           <SegmentedTabs
             iconOnly={true}
             items={[
-              { value: 'list', icon: 'list-view', label: '' },
+              { value: 'list', icon: 'hamburger-menu', label: '' },
               { value: 'map', icon: 'map', label: '' }
             ]}
             value={viewMode}
-            onValueChange={(value) => setViewMode(value as 'list' | 'map')}
+            onValueChange={(value: string) => setViewMode(value as 'list' | 'map')}
           />
         </div>
 
@@ -1268,7 +690,7 @@ export default function MyJourneys({ onOpenNavigation }: MyJourneysProps) {
             className="quick-filter-row"
             filters={quickFilters.map(filter => ({
               ...filter,
-              selected: activeFilters.has(filter.id),
+              countStyle: (filter.id === 'stoppage' || filter.id === 'deviation' || filter.id === 'delayed') ? { color: '#D32F2F', fontWeight: 700 } : undefined,
               selectedOption: (Array.from(activeFilters) as string[])
                 .find((f: string) => f.startsWith(`${filter.id}:`))?.split(':')[1]
             }))}
@@ -1316,16 +738,16 @@ export default function MyJourneys({ onOpenNavigation }: MyJourneysProps) {
 
           <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-4)' }}>
             <Button variant="text" style={{ width: '32px', height: '32px', padding: '8px', minWidth: '32px' }}>
-              <Star style={{ width: '16px', height: '16px', color: 'var(--secondary)' }} />
+              <Icon name="star" style={{ width: '16px', height: '16px', color: 'var(--secondary)' }} />
             </Button>
             <Button variant="text" style={{ width: '32px', height: '32px', padding: '8px', minWidth: '32px' }}>
-              <Download style={{ width: '16px', height: '16px', color: 'var(--secondary)' }} />
+              <Icon name="download" style={{ width: '16px', height: '16px', color: 'var(--secondary)' }} />
             </Button>
             <Button variant="text" style={{ width: '32px', height: '32px', padding: '8px', minWidth: '32px' }}>
-              <Filter style={{ width: '16px', height: '16px', color: 'var(--secondary)' }} />
+              <Icon name="filter" style={{ width: '16px', height: '16px', color: 'var(--secondary)' }} />
             </Button>
             <Button variant="text" style={{ width: '32px', height: '32px', padding: '8px', minWidth: '32px' }}>
-              <LayoutList style={{ width: '16px', height: '16px', color: 'var(--secondary)' }} />
+              <Icon name="hamburger-menu" style={{ width: '16px', height: '16px', color: 'var(--secondary)' }} />
             </Button>
             <Button variant="text" style={{ width: '32px', height: '32px', padding: '8px', minWidth: '32px' }}>
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ color: 'var(--secondary)' }}>
@@ -1350,7 +772,7 @@ export default function MyJourneys({ onOpenNavigation }: MyJourneysProps) {
                 style={{ width: '24px', height: '24px', padding: 0 }}
                 onClick={() => setPage((prev) => Math.max(1, prev - 1))}
               >
-                <ChevronLeft style={{ width: '16px', height: '16px', color: 'var(--secondary)' }} />
+                <Icon name="chevron-left" style={{ width: '16px', height: '16px', color: 'var(--secondary)' }} />
               </Button>
               <span style={{ fontSize: 'var(--font-size-sm)', color: 'var(--primary)', minWidth: '20px', textAlign: 'center' }}>
                 {page}
@@ -1360,7 +782,7 @@ export default function MyJourneys({ onOpenNavigation }: MyJourneysProps) {
                 style={{ width: '24px', height: '24px', padding: 0 }}
                 onClick={() => setPage((prev) => prev + 1)}
               >
-                <ChevronRight style={{ width: '16px', height: '16px', color: 'var(--secondary)' }} />
+                <Icon name="chevron-right" style={{ width: '16px', height: '16px', color: 'var(--secondary)' }} />
               </Button>
             </div>
           </div>
@@ -1390,9 +812,9 @@ export default function MyJourneys({ onOpenNavigation }: MyJourneysProps) {
                 padding-right: 0 !important;
                 height: auto !important;
                 box-sizing: border-box !important;
-                background-color: #F9FAFB !important;
+                background-color: #F8F8F9 !important;
                 font-weight: 600 !important;
-                color: #4B5563 !important;
+                color: var(--secondary) !important;
               }
               
               /* First column header and cells - ensure checkbox is visible */
