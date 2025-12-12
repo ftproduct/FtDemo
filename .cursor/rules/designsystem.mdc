@@ -1,0 +1,214 @@
+---
+alwaysApply: true
+---
+# FT Design System - Component Usage Rules
+
+## 🎯 Core Principle
+**ALWAYS use components from `ft-design-system/ai`. NEVER create custom UI components or use shadcn/ui components.**
+
+## ✅ Required Import Pattern
+
+// ✅ CORRECT - Always import from ft-design-system/ai
+import { Button, Input, Badge, Table, Tabs, Checkbox, Dropdown } from 'ft-design-system/ai';
+
+// ❌ WRONG - Never use these
+import { Button } from '../ui/button';
+import { FTButton } from '../FTButton';
+import { Button } from '@/components/ui/button';## 📦 Available FT Design System Components
+
+### Core Components
+- **Button** - Interactive buttons
+- **Input** - Text input fields
+- **Badge** - Status indicators (non-interactive display)
+- **QuickFilters** - Interactive filter chips (clickable, with counts)
+- **Checkbox** - Selection checkboxes
+- **RadioGroup** - Radio button groups
+- **Switch** - Toggle switches
+- **Dropdown** - Dropdown select menus
+- **Table** - Data tables
+- **Tabs** - Tab navigation
+- **ProgressBar** - Progress indicators
+- **Card** - Container cards
+- **Statistic** - Numeric displays
+- **Text** - Typography text
+- **SubText** - Secondary text
+- **DisplayBlock** - Display containers
+- **NavigationMenu** - Navigation menus
+
+## 🎨 Component Usage Guidelines
+
+### Button
+// Variants: primary, secondary, destructive, text, link
+<Button variant="primary">Save</Button>
+<Button variant="secondary">Cancel</Button>
+<Button variant="destructive">Delete</Button>
+<Button variant="text" icon="add">Add Item</Button>
+<Button variant="link" icon="arrow-right">Learn More</Button>
+
+// With icons (use string icon names, not React components)
+<Button variant="primary" icon="check">Confirm</Button>
+<Button variant="text" icon="download" />### Badge (Non-Interactive Display)
+// Variants: normal, neutral, warning, danger, success
+// Use for status display only, not for filtering
+<Badge variant="normal">Pending</Badge>
+<Badge variant="neutral">Info</Badge>
+<Badge variant="warning">Warning</Badge>
+<Badge variant="danger">Critical</Badge>
+<Badge variant="success">Completed</Badge>
+
+### QuickFilters (Interactive Filtering)
+// Types: normal, alert, warning, success, neutral
+// Use for clickable filters with counts
+<QuickFilters 
+  filters={[
+    { id: 'stoppage', label: 'Long Stoppage', count: 19, type: 'alert' },
+    { id: '0-6hrs', label: '0-6 hrs', count: 28, type: 'warning' },
+    { id: '6hrs', label: '6 hrs', count: 28, type: 'success' },
+  ]}
+  onFilterClick={(filterId) => handleFilterClick(filterId)}
+  onFilterRemove={(filterId) => handleFilterRemove(filterId)}
+/>### Input
+<Input 
+  placeholder="Enter text"
+  label="Field Label"
+  error="Error message"
+  helperText="Helper text"
+  leadingIcon="search"
+/>### Dropdown
+<Dropdown
+  options={[
+    { value: 'opt1', label: 'Option 1' },
+    { value: 'opt2', label: 'Option 2' }
+  ]}
+  placeholder="Select option"
+  defaultValue="opt1"
+/>### Table
+const columns: TableColumn<DataType>[] = [
+  {
+    key: 'name',
+    title: 'Name',
+    width: '200px',
+    render: (_: any, record: DataType) => (
+      <span>{record.name}</span>
+    )
+  }
+];
+
+<Table columns={columns} data={data} />
+
+// Note: Use render function for custom cells, NOT dataIndex### Tabs
+<Tabs 
+  tabs={[
+    { label: 'Tab 1', badge: true, badgeCount: 10 },
+    { label: 'Tab 2', badge: true, badgeCount: 5 },
+    { label: 'Tab 3' }
+  ]}
+  activeTab={selectedTab}
+  onChange={(index) => setSelectedTab(index)}
+/>### Checkbox
+<Checkbox 
+  checked={isChecked}
+  onChange={(e) => setIsChecked(e.target.checked)}
+/>### Switch
+<Switch 
+  checked={isEnabled}
+  onCheckedChange={setIsEnabled}
+/>### ProgressBar
+<ProgressBar value={75} />## 🚫 Forbidden Practices
+
+### ❌ NEVER Do This:
+// Don't use HTML button elements
+<button onClick={handler}>Click</button>
+
+// Don't use custom styled divs as buttons
+<div style={{ cursor: 'pointer' }} onClick={handler}>Click</div>
+
+// Don't import from ui folder
+import { Button } from '../ui/button';
+
+// Don't use deprecated custom components
+import { FTButton } from '../FTButton';
+import { FTInput } from '../FTInput';
+import { FTTab } from '../FTTab';
+
+// Don't use inline badge styling
+<span style={{ background: 'red', padding: '4px' }}>Badge</span>### ✅ ALWAYS Do This:
+// Use FT Design System Button
+<Button variant="primary" onClick={handler}>Click</Button>
+
+// Use FT Design System Badge
+<Badge variant="danger">Critical</Badge>
+
+// Import from ft-design-system/ai
+import { Button, Badge, Input } from 'ft-design-system/ai';## 🎨 Styling Guidelines
+
+### Use CSS Variables
+// ✅ CORRECT - Use CSS variables from globals.css
+<div style={{
+  color: 'var(--primary)',
+  backgroundColor: 'var(--bg-primary)',
+  padding: 'var(--space-4)',
+  borderRadius: 'var(--radius-md)',
+  fontSize: 'var(--font-size-md)',
+  gap: 'var(--space-2)'
+}}>
+  Content
+</div>
+
+// ❌ WRONG - Don't use hardcoded values
+<div style={{
+  color: '#333',
+  backgroundColor: '#fff',
+  padding: '16px',
+  borderRadius: '8px'
+}}>
+  Content
+</div>### Available CSS Variables
+
+#### Colors
+- `--primary`, `--secondary`, `--tertiary`
+- `--bg-primary`, `--bg-secondary`
+- `--border-primary`, `--border-secondary`
+- `--positive`, `--warning`, `--critical`, `--info`
+- `--badge-danger-bg`, `--badge-danger-text`, `--badge-danger-border`
+- `--badge-success-bg`, `--badge-success-text`, `--badge-success-border`
+- `--badge-warning-bg`, `--badge-warning-text`, `--badge-warning-border`
+- `--badge-normal-bg`, `--badge-normal-text`, `--badge-normal-border`
+- `--badge-neutral-bg`, `--badge-neutral-text`, `--badge-neutral-border`
+
+#### Spacing (8-point grid)
+- `--space-0` to `--space-24` (0px, 4px, 8px, 12px, 16px... 96px)
+
+#### Typography
+- `--font-size-xs` (12px), `--font-size-sm` (14px), `--font-size-md` (16px)
+- `--font-size-lg` (20px), `--font-size-xl` (24px), `--font-size-xxl` (28px)
+- `--font-weight-regular` (400), `--font-weight-medium` (500)
+- `--font-weight-semibold` (600), `--font-weight-bold` (700)
+
+#### Border Radius
+- `--radius-sm` (4px), `--radius-md` (8px), `--radius-lg` (12px)
+
+## 🔍 Code Review Checklist
+
+Before committing code, verify:
+- [ ] All UI components imported from `ft-design-system/ai`
+- [ ] No imports from `../ui/` folder
+- [ ] No imports from deprecated `FTButton`, `FTInput`, `FTTab`
+- [ ] No raw HTML elements (`<button>`, `<input>`, `<select>`) - use FT components
+- [ ] All colors use CSS variables, not hardcoded hex values
+- [ ] All spacing uses CSS variables (`--space-*`)
+- [ ] All typography uses CSS variables (`--font-size-*`, `--font-weight-*`)
+- [ ] Badge variants used correctly (normal, neutral, warning, danger, success)
+- [ ] Button variants used correctly (primary, secondary, destructive, text, link)
+- [ ] Table columns use `render` function, not `dataIndex` alone for custom content
+
+## 📚 Documentation
+- Storybook: https://ftdesignsystem.netlify.app/
+- Badge Docs: https://ftdesignsystem.netlify.app/?path=/docs/atoms-badge--docs
+
+## 🐛 Bug Reporting
+If a component is missing or broken, report it to the FT Design System team with:
+1. Component name
+2. Expected behavior
+3. Current behavior
+4. Use case example
