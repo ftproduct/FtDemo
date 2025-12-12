@@ -1,0 +1,29 @@
+[
+  {
+    "id": "user-1",
+    "name": "John Doe",
+    "email": "john.doe@ftdemo.com",
+    "role": "admin",
+    "company_id": "company-1",
+    "created_at": "2024-01-15T10:00:00Z",
+    "updated_at": "2024-01-15T10:00:00Z"
+  },
+  {
+    "id": "user-2",
+    "name": "Jane Smith",
+    "email": "jane.smith@ftdemo.com",
+    "role": "user",
+    "company_id": "company-1",
+    "created_at": "2024-01-16T10:00:00Z",
+    "updated_at": "2024-01-16T10:00:00Z"
+  },
+  {
+    "id": "user-3",
+    "name": "Bob Johnson",
+    "email": "bob.johnson@ftdemo.com",
+    "role": "viewer",
+    "company_id": "company-2",
+    "created_at": "2024-01-17T10:00:00Z",
+    "updated_at": "2024-01-17T10:00:00Z"
+  }
+]

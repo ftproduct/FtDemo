@@ -1,0 +1,107 @@
+[
+  {
+    "id": "shipment-1",
+    "shipment_id": "SHP-001",
+    "tracking_number": "TRK-2024-001",
+    "order_id": "order-1",
+    "journey_id": "journey-1",
+    "status": "in_transit",
+    "origin": "Mumbai",
+    "destination": "Delhi",
+    "estimated_delivery": "2024-01-23T18:00:00Z",
+    "actual_delivery": null,
+    "carrier": "ABC Logistics",
+    "weight": 2500.5,
+    "dimensions": {
+      "length": 12,
+      "width": 8,
+      "height": 6
+    },
+    "created_at": "2024-01-20T08:00:00Z",
+    "updated_at": "2024-01-21T14:30:00Z"
+  },
+  {
+    "id": "shipment-2",
+    "shipment_id": "SHP-002",
+    "tracking_number": "TRK-2024-002",
+    "order_id": "order-2",
+    "journey_id": "journey-2",
+    "status": "picked_up",
+    "origin": "Bangalore",
+    "destination": "Chennai",
+    "estimated_delivery": "2024-01-24T12:00:00Z",
+    "actual_delivery": null,
+    "carrier": "XYZ Transport",
+    "weight": 1800.0,
+    "dimensions": {
+      "length": 10,
+      "width": 6,
+      "height": 5
+    },
+    "created_at": "2024-01-19T10:00:00Z",
+    "updated_at": "2024-01-21T12:00:00Z"
+  },
+  {
+    "id": "shipment-3",
+    "shipment_id": "SHP-003",
+    "tracking_number": "TRK-2024-003",
+    "order_id": "order-3",
+    "journey_id": "journey-3",
+    "status": "delivered",
+    "origin": "Kolkata",
+    "destination": "Hyderabad",
+    "estimated_delivery": "2024-01-20T16:00:00Z",
+    "actual_delivery": "2024-01-20T15:30:00Z",
+    "carrier": "PQR Freight",
+    "weight": 3200.75,
+    "dimensions": {
+      "length": 14,
+      "width": 9,
+      "height": 7
+    },
+    "created_at": "2024-01-18T09:00:00Z",
+    "updated_at": "2024-01-20T16:00:00Z"
+  },
+  {
+    "id": "shipment-4",
+    "shipment_id": "SHP-004",
+    "tracking_number": "TRK-2024-004",
+    "order_id": "order-4",
+    "journey_id": "journey-4",
+    "status": "pending",
+    "origin": "Pune",
+    "destination": "Ahmedabad",
+    "estimated_delivery": "2024-01-22T14:00:00Z",
+    "actual_delivery": null,
+    "carrier": "LMN Cargo",
+    "weight": 1500.25,
+    "dimensions": {
+      "length": 8,
+      "width": 5,
+      "height": 4
+    },
+    "created_at": "2024-01-21T08:00:00Z",
+    "updated_at": "2024-01-21T08:00:00Z"
+  },
+  {
+    "id": "shipment-5",
+    "shipment_id": "SHP-005",
+    "tracking_number": "TRK-2024-005",
+    "order_id": "order-5",
+    "journey_id": "journey-5",
+    "status": "exception",
+    "origin": "Jaipur",
+    "destination": "Lucknow",
+    "estimated_delivery": "2024-01-19T18:00:00Z",
+    "actual_delivery": null,
+    "carrier": "STU Logistics",
+    "weight": 2200.0,
+    "dimensions": {
+      "length": 11,
+      "width": 7,
+      "height": 6
+    },
+    "created_at": "2024-01-17T11:00:00Z",
+    "updated_at": "2024-01-19T10:00:00Z"
+  }
+]
