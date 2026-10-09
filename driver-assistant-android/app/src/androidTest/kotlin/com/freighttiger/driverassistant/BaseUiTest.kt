@@ -96,11 +96,18 @@ abstract class BaseUiTest {
         return compose.onNodeWithTag(tag)
     }
 
-    protected fun clickTag(tag: String) = tag(tag).performScrollTo().performClick()
+    /** Scrolls into view when inside a scrollable container (fixed bars such as the Talk button are not). */
+    protected fun clickTag(tag: String) {
+        val node = tag(tag)
+        runCatching { node.performScrollTo() }
+        node.performClick()
+    }
 
     /** Clicks the node whose text is exactly [text]. */
     protected fun clickText(text: String) {
         compose.waitUntil(5_000) { compose.onAllNodes(hasText(text)).fetchSemanticsNodes().isNotEmpty() }
-        compose.onNodeWithText(text).performScrollTo().performClick()
+        val node = compose.onNodeWithText(text)
+        runCatching { node.performScrollTo() }
+        node.performClick()
     }
 }
