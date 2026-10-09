@@ -106,6 +106,25 @@ class TripCoordinatorTest {
     }
 
     @Test
+    fun `consent cannot be given through a free-form command`() = runTest {
+        val h = TestHarness()
+        h.withConsentRequest()
+        val r = h.coordinator.applyCommand(TRIP, com.freighttiger.driverassistant.domain.conversation.DialogueOutcome.Consent(ConsentDecision.GRANTED, CaptureMethod.VOICE, "haan", 0.9f))
+        assertEquals(CoordinatorResult.Refused("CONSENT_REQUIRES_QUESTION"), r)
+        assertEquals(ConsentState.REQUESTED, h.consents.get("consent-789")?.state)
+        assertTrue(h.outbox.all().isEmpty())
+    }
+
+    @Test
+    fun `free-form arrival command is applied to the active trip`() = runTest {
+        val h = TestHarness()
+        h.processor.process(h.assigned())
+        val r = h.coordinator.applyCommand(TRIP, com.freighttiger.driverassistant.domain.conversation.DialogueOutcome.Arrival(true, null, CaptureMethod.VOICE))
+        assertTrue(r is CoordinatorResult.Queued)
+        assertEquals(LoadingStatus.REACHED_LOADING_POINT, h.trips.get(TRIP)?.loadingStatus)
+    }
+
+    @Test
     fun `updates for cancelled trips are refused`() = runTest {
         val h = TestHarness()
         h.processor.process(h.assigned())

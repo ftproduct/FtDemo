@@ -93,6 +93,16 @@ data class AssistantEventRequest(
     @SerialName("idempotency_key") val idempotencyKey: String,
 )
 
+// ---------- PUT /api/v1/assistant/devices/push-token ----------
+
+@Serializable
+data class PushTokenRequest(
+    @SerialName("driver_id") val driverId: String,
+    @SerialName("push_token") val pushToken: String,
+    @SerialName("platform") val platform: String = "android",
+    @SerialName("app_version") val appVersion: String,
+)
+
 // ---------- Common acknowledgement / error ----------
 
 @Serializable

@@ -196,3 +196,26 @@ class ApiContractTest {
         "status":"ASSIGNED","assigned_at":"2026-10-09T12:00:00Z"}}
     """.trimIndent()
 }
+
+class PushTokenContractTest {
+    @Test
+    fun `push token registration uses PUT and accepts empty 204`() = runTest {
+        val server = MockWebServer()
+        server.start()
+        try {
+            val config = ApiConfig(server.url("/").toString(), "test", "0.1.0", allowCleartext = true)
+            val backend = RemoteAssistantBackend(NetworkFactory.api(config, NetworkFactory.okHttpClient(config, { "t" })), config)
+            server.enqueue(MockResponse().setResponseCode(204))
+            assertEquals(BackendResult.Success(Unit), backend.registerPushToken("driver-123", "fcm-token"))
+            val req = server.takeRequest()
+            assertEquals("PUT", req.method)
+            assertEquals("/api/v1/assistant/devices/push-token", req.path)
+            assertEquals(
+                Json.parseToJsonElement("""{"driver_id":"driver-123","push_token":"fcm-token","platform":"android","app_version":"0.1.0"}"""),
+                Json.parseToJsonElement(req.body.readUtf8()),
+            )
+        } finally {
+            server.shutdown()
+        }
+    }
+}

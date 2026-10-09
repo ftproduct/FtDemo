@@ -8,6 +8,7 @@ import com.freighttiger.driverassistant.core.network.dto.ConsentResponseRequest
 import com.freighttiger.driverassistant.core.network.dto.OtpChallengeResponse
 import com.freighttiger.driverassistant.core.network.dto.OtpRequest
 import com.freighttiger.driverassistant.core.network.dto.OtpVerifyRequest
+import com.freighttiger.driverassistant.core.network.dto.PushTokenRequest
 import com.freighttiger.driverassistant.core.network.dto.SupportRequestRequest
 import com.freighttiger.driverassistant.core.network.dto.TripStateResponse
 import com.freighttiger.driverassistant.core.network.dto.TripUpdateRequest
@@ -16,6 +17,7 @@ import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.POST
+import retrofit2.http.PUT
 import retrofit2.http.Path
 
 /**
@@ -53,6 +55,9 @@ interface FreightTigerAssistantApi {
         @Header("Idempotency-Key") idempotencyKey: String,
         @Body body: SupportRequestRequest,
     ): Response<AckResponse>
+
+    @PUT("api/v1/assistant/devices/push-token")
+    suspend fun putPushToken(@Body body: PushTokenRequest): Response<Unit>
 
     @POST("api/v1/assistant/auth/otp/request")
     suspend fun requestOtp(@Body body: OtpRequest): Response<OtpChallengeResponse>

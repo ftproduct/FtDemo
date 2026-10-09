@@ -1,0 +1,392 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Hindi (default). All user-facing text is centralised here; add values-xx for new languages. -->
+<resources>
+    <string name="app_name">FT ड्राइवर सहायक</string>
+
+    <!-- Common -->
+    <string name="demo_banner">डेमो मोड — सिम्युलेटेड डेटा। ये असली फ्रेट टाइगर अपडेट नहीं हैं।</string>
+    <string name="simulated_badge">सिम्युलेटेड</string>
+    <string name="offline_banner">इंटरनेट नहीं है। आपके जवाब फ़ोन में सुरक्षित हैं और नेटवर्क आने पर भेजे जाएँगे।</string>
+    <string name="pending_sync_count">%1$d अपडेट भेजना बाकी</string>
+    <string name="failed_sync_count">%1$d अपडेट भेजे नहीं जा सके — देखें</string>
+    <string name="all_synced">सभी अपडेट भेज दिए गए</string>
+    <string name="action_back">वापस</string>
+    <string name="action_continue">आगे बढ़ें</string>
+    <string name="action_retry">फिर से कोशिश करें</string>
+    <string name="action_later">बाद में</string>
+    <string name="action_yes">हाँ</string>
+    <string name="action_no">नहीं</string>
+    <string name="action_repeat">फिर से सुनाएँ</string>
+    <string name="action_stop_audio">आवाज़ बंद करें</string>
+    <string name="action_cancel">रद्द करें</string>
+    <string name="action_close">बंद करें</string>
+    <string name="loading">लोड हो रहा है…</string>
+    <string name="error_generic">कुछ गड़बड़ हुई। फिर से कोशिश करें।</string>
+    <string name="safety_note">गाड़ी चलाते समय फ़ोन न छुएँ। सुरक्षित रुककर जवाब दें, या “बाद में” चुनें।</string>
+
+    <!-- Onboarding -->
+    <string name="welcome_title">नमस्ते! मैं आपका ट्रिप सहायक हूँ</string>
+    <string name="welcome_body">मैं ट्रिप की ज़रूरी जानकारी बोलकर बताऊँगा और आपके जवाब फ्रेट टाइगर तक पहुँचाऊँगा, ताकि आपको बार-बार फ़ोन न उठाना पड़े।</string>
+    <string name="welcome_start">शुरू करें</string>
+    <string name="phone_title">अपना मोबाइल नंबर डालें</string>
+    <string name="phone_hint">10 अंकों का मोबाइल नंबर</string>
+    <string name="phone_send_otp">OTP भेजें</string>
+    <string name="otp_title">OTP डालें</string>
+    <string name="otp_sent_to">%1$s पर भेजा गया 6 अंकों का कोड डालें</string>
+    <string name="otp_demo_hint">डेमो OTP: %1$s (कोई असली SMS नहीं भेजा गया)</string>
+    <string name="otp_hint">6 अंकों का OTP</string>
+    <string name="otp_verify">पुष्टि करें</string>
+    <string name="identity_title">क्या यह आप हैं?</string>
+    <string name="identity_driver_id">ड्राइवर आईडी: %1$s</string>
+    <string name="identity_phone">मोबाइल: %1$s</string>
+    <string name="identity_trip">चालू ट्रिप: %1$s → %2$s</string>
+    <string name="identity_no_trip">अभी कोई चालू ट्रिप नहीं है</string>
+    <string name="identity_confirm">हाँ, यह मैं हूँ</string>
+    <string name="identity_not_me">नहीं, यह मैं नहीं हूँ</string>
+    <string name="identity_not_me_help">कृपया अपने फ्रेट टाइगर संपर्क व्यक्ति से बात करें। गलत खाते से आगे न बढ़ें।</string>
+    <string name="language_title">भाषा चुनें</string>
+    <string name="language_coming_soon">जल्द आ रहा है</string>
+    <string name="language_hi">हिंदी</string>
+    <string name="language_en">English</string>
+    <string name="language_mr">मराठी</string>
+    <string name="language_ta">தமிழ்</string>
+    <string name="language_te">తెలుగు</string>
+    <string name="language_bn">বাংলা</string>
+    <string name="permissions_title">अनुमतियाँ और आवाज़ की जाँच</string>
+    <string name="mic_title">माइक्रोफ़ोन</string>
+    <string name="mic_why">जब आप माइक बटन दबाकर बोलेंगे, सिर्फ़ तभी माइक आपकी आवाज़ सुनेगा। ऐप लगातार नहीं सुनता।</string>
+    <string name="mic_grant">माइक की अनुमति दें</string>
+    <string name="mic_granted">माइक की अनुमति मिल गई</string>
+    <string name="mic_denied">माइक की अनुमति नहीं मिली — आप बटन दबाकर जवाब दे सकते हैं</string>
+    <string name="notif_title">सूचनाएँ</string>
+    <string name="notif_why">नया ट्रिप या सवाल आने पर सूचना दिखाने के लिए, ताकि आप सुरक्षित रुककर जवाब दे सकें।</string>
+    <string name="notif_grant">सूचना की अनुमति दें</string>
+    <string name="notif_granted">सूचनाएँ चालू हैं</string>
+    <string name="notif_denied">सूचनाएँ बंद हैं — नए सवाल ऐप खोलने पर दिखेंगे</string>
+    <string name="speech_check_title">आवाज़ की जाँच</string>
+    <string name="tts_ok">हिंदी आवाज़ (बोलना) उपलब्ध है</string>
+    <string name="tts_missing">हिंदी आवाज़ उपलब्ध नहीं — फ़ोन की सेटिंग में हिंदी “टेक्स्ट-टू-स्पीच” डाउनलोड करें। तब तक सवाल स्क्रीन पर दिखेंगे।</string>
+    <string name="stt_ok">बोलकर जवाब देना उपलब्ध है</string>
+    <string name="stt_missing">इस फ़ोन पर बोलकर जवाब देना उपलब्ध नहीं — बटन दबाकर जवाब दें</string>
+    <string name="privacy_title">आपकी जानकारी और अनुमति</string>
+    <string name="privacy_point_scope">यह ऐप सिर्फ़ फ्रेट टाइगर ट्रिप से जुड़े सवाल पूछता है। आपके SMS, कॉल, संपर्क या दूसरे मैसेज नहीं पढ़ता।</string>
+    <string name="privacy_point_mic">माइक सिर्फ़ तब चालू होता है जब आप जवाब देने के लिए बटन दबाते हैं। स्क्रीन पर माइक का निशान दिखता है।</string>
+    <string name="privacy_point_recording">आपकी आवाज़ की रिकॉर्डिंग नहीं भेजी जाती। सिर्फ़ आपका जवाब और उसका लिखित रूप भेजा जाता है।</string>
+    <string name="privacy_point_tracking">लोकेशन ट्रैकिंग हर ट्रिप के लिए अलग से आपकी साफ़ अनुमति लेकर ही होती है। आप मना कर सकते हैं और कभी भी अनुमति वापस ले सकते हैं।</string>
+    <string name="privacy_point_safety">गाड़ी चलाते समय फ़ोन न छुएँ। हर सवाल का जवाब बाद में भी दिया जा सकता है।</string>
+    <string name="privacy_accept">समझ गया, आगे बढ़ें</string>
+    <string name="test_title">आवाज़ सुनकर देखें</string>
+    <string name="test_body">बटन दबाएँ और सुनें कि सहायक की आवाज़ साफ़ आ रही है।</string>
+    <string name="test_play">आवाज़ सुनें</string>
+    <string name="test_done">ऐप शुरू करें</string>
+
+    <!-- Home -->
+    <string name="home_title">मेरा ट्रिप</string>
+    <string name="home_no_trip_title">अभी कोई ट्रिप नहीं</string>
+    <string name="home_no_trip_body">नया ट्रिप मिलने पर मैं आपको बताऊँगा।</string>
+    <string name="label_vehicle">गाड़ी</string>
+    <string name="route_from_to">%1$s → %2$s</string>
+    <string name="label_loading_point">लोडिंग पॉइंट</string>
+    <string name="label_tracking">लोकेशन ट्रैकिंग</string>
+    <string name="label_next_action">अगला काम</string>
+    <string name="talk_button">सहायक से बात करें</string>
+    <string name="answer_now">जवाब दें</string>
+    <string name="pending_question">आपके जवाब का इंतज़ार</string>
+    <string name="recent_activity">हाल की गतिविधि</string>
+    <string name="view_all">सब देखें</string>
+    <string name="menu_trip_details">ट्रिप विवरण</string>
+    <string name="menu_report">अपडेट दें</string>
+    <string name="menu_consent">अनुमति</string>
+    <string name="menu_tracking">ट्रैकिंग</string>
+    <string name="menu_activity">इतिहास</string>
+    <string name="menu_settings">सेटिंग</string>
+    <string name="menu_support">सहायता</string>
+    <string name="menu_sync">सिंक</string>
+    <string name="menu_demo">डेमो पैनल</string>
+    <string name="next_consent">लोकेशन ट्रैकिंग पर जवाब दें</string>
+    <string name="next_eta">पहुँचने का समय बताएँ</string>
+    <string name="next_reach">लोडिंग पॉइंट पर पहुँचें</string>
+    <string name="next_loading">लोडिंग की स्थिति बताएँ</string>
+    <string name="next_none">अभी कुछ ज़रूरी नहीं</string>
+
+    <!-- Prompt titles -->
+    <string name="prompt_consent">लोकेशन ट्रैकिंग की अनुमति</string>
+    <string name="prompt_eta">पहुँचने का समय</string>
+    <string name="prompt_arrival">क्या आप लोडिंग पॉइंट पहुँच गए?</string>
+    <string name="prompt_loading">लोडिंग की स्थिति</string>
+    <string name="prompt_briefing">नया ट्रिप मिला</string>
+    <string name="prompt_tracking_result">ट्रैकिंग अपडेट</string>
+    <string name="prompt_trip_cancelled">ट्रिप रद्द हुआ</string>
+    <string name="prompt_trip_completed">ट्रिप पूरा हुआ</string>
+
+    <!-- Tracking status -->
+    <string name="tracking_not_started">शुरू नहीं हुई</string>
+    <string name="tracking_pending">शुरू हो रही है — पुष्टि बाकी</string>
+    <string name="tracking_active">चालू — फ्रेट टाइगर ने पुष्टि की</string>
+    <string name="tracking_failed">शुरू नहीं हो पाई</string>
+    <string name="tracking_stop_requested">बंद करने का अनुरोध भेजा गया</string>
+    <string name="tracking_stopped">बंद</string>
+
+    <!-- Consent state -->
+    <string name="consent_state_not_requested">अनुरोध नहीं आया</string>
+    <string name="consent_state_requested">अनुरोध आया है</string>
+    <string name="consent_state_awaiting">आपके जवाब का इंतज़ार</string>
+    <string name="consent_state_pending_validation">आपने हाँ कहा — फ्रेट टाइगर की पुष्टि बाकी</string>
+    <string name="consent_state_granted">अनुमति दी गई — पुष्टि हो गई</string>
+    <string name="consent_state_declined">आपने मना किया</string>
+    <string name="consent_state_expired">अनुरोध की समय सीमा खत्म</string>
+    <string name="consent_state_withdrawn">अनुमति वापस ली गई</string>
+    <string name="consent_state_validation_failed">पुष्टि नहीं हो पाई</string>
+    <string name="submission_captured">फ़ोन में दर्ज — भेजना बाकी</string>
+    <string name="submission_submitted">भेजा जा रहा है</string>
+    <string name="submission_accepted">फ्रेट टाइगर को मिल गया</string>
+    <string name="submission_rejected">फ्रेट टाइगर ने अस्वीकार किया</string>
+
+    <!-- Loading status -->
+    <string name="loading_not_reached">अभी नहीं पहुँचे</string>
+    <string name="loading_reached">लोडिंग पॉइंट पर पहुँच गए</string>
+    <string name="loading_waiting">लोडिंग का इंतज़ार</string>
+    <string name="loading_started">लोडिंग शुरू</string>
+    <string name="loading_completed">लोडिंग पूरी</string>
+    <string name="loading_issue">समस्या / देरी</string>
+
+    <!-- Trip status -->
+    <string name="trip_assigned">सौंपा गया</string>
+    <string name="trip_in_progress">चालू</string>
+    <string name="trip_cancelled">रद्द</string>
+    <string name="trip_completed">पूरा</string>
+
+    <!-- Outbox -->
+    <string name="outbox_pending">भेजना बाकी</string>
+    <string name="outbox_in_flight">भेजा जा रहा है</string>
+    <string name="outbox_retry">दोबारा कोशिश होगी</string>
+    <string name="outbox_ack">पहुँच गया</string>
+    <string name="outbox_failed_permanent">अस्वीकार हुआ</string>
+    <string name="outbox_failed_max">भेजा नहीं जा सका</string>
+    <string name="outbox_cancelled">रद्द (ट्रिप बदल गया)</string>
+    <string name="ev_consent">ट्रैकिंग अनुमति का जवाब</string>
+    <string name="ev_withdraw">अनुमति वापसी</string>
+    <string name="ev_eta">पहुँचने का समय</string>
+    <string name="ev_arrival">पहुँचने की जानकारी</string>
+    <string name="ev_loading">लोडिंग की स्थिति</string>
+    <string name="ev_support">सहायता अनुरोध</string>
+    <string name="ev_interaction">सहायक गतिविधि</string>
+
+    <!-- Activity kinds -->
+    <string name="act_event_received">फ्रेट टाइगर से अपडेट</string>
+    <string name="act_event_rejected">अपडेट अस्वीकार / अनदेखा</string>
+    <string name="act_prompt_scheduled">नया सवाल</string>
+    <string name="act_prompt_suppressed">दोहराया सवाल रोका गया</string>
+    <string name="act_prompt_deferred">बाद के लिए टाला</string>
+    <string name="act_driver_response">आपका जवाब</string>
+    <string name="act_consent">अनुमति की स्थिति</string>
+    <string name="act_tracking">ट्रैकिंग की स्थिति</string>
+    <string name="act_trip">ट्रिप की स्थिति</string>
+    <string name="act_sync_success">भेज दिया गया</string>
+    <string name="act_sync_failure">भेजने में समस्या</string>
+    <string name="act_support">सहायता</string>
+    <string name="act_conflict">टकराव — समीक्षा ज़रूरी</string>
+
+    <!-- Trip details -->
+    <string name="trip_details_title">ट्रिप विवरण</string>
+    <string name="label_trip_id">ट्रिप आईडी</string>
+    <string name="label_trip_status">ट्रिप की स्थिति</string>
+    <string name="label_origin">कहाँ से</string>
+    <string name="label_destination">कहाँ तक</string>
+    <string name="label_address">पता</string>
+    <string name="label_reporting_time">रिपोर्टिंग समय</string>
+    <string name="label_driver_eta">आपका बताया समय</string>
+    <string name="driver_eta_value">%1$s तक (%2$s — आपके द्वारा बताया गया, GPS अनुमान नहीं)</string>
+    <string name="label_driver_arrival">आपकी जानकारी</string>
+    <string name="driver_arrived">आपने बताया: पहुँच गए</string>
+    <string name="driver_not_arrived">आपने बताया: अभी नहीं पहुँचे</string>
+    <string name="label_verified_arrival">GPS / जियोफ़ेंस पुष्टि</string>
+    <string name="verified_at">%1$s पर पुष्टि</string>
+    <string name="not_verified">अभी पुष्टि नहीं हुई</string>
+    <string name="label_loading_status">लोडिंग की स्थिति</string>
+    <string name="not_reported">अभी नहीं बताया</string>
+
+    <!-- Report -->
+    <string name="report_title">अपडेट दें</string>
+    <string name="eta_section">लोडिंग पॉइंट पर कितनी देर में पहुँचेंगे?</string>
+    <string name="eta_15">15 मिनट</string>
+    <string name="eta_30">30 मिनट</string>
+    <string name="eta_60">1 घंटा</string>
+    <string name="eta_120">2 घंटे</string>
+    <string name="eta_240">4 घंटे</string>
+    <string name="arrival_section">क्या आप लोडिंग पॉइंट पर पहुँच गए?</string>
+    <string name="arrival_yes">हाँ, पहुँच गया</string>
+    <string name="arrival_no">अभी नहीं</string>
+    <string name="loading_section">लोडिंग की स्थिति</string>
+    <string name="report_queued">दर्ज हो गया — फ्रेट टाइगर को भेजा जा रहा है</string>
+    <string name="report_refused">यह अपडेट अभी नहीं दिया जा सकता: %1$s</string>
+    <string name="report_by_voice">बोलकर बताएँ</string>
+
+    <!-- Consent -->
+    <string name="consent_title">लोकेशन ट्रैकिंग अनुमति</string>
+    <string name="consent_explain">फ्रेट टाइगर इस ट्रिप (%1$s) के दौरान आपकी गाड़ी की लोकेशन आपके मोबाइल नंबर (SIM) के ज़रिए ट्रैक करना चाहता है। यह अनुमति सिर्फ़ इसी ट्रिप के लिए है।</string>
+    <string name="consent_purpose">उद्देश्य: ट्रिप के दौरान SIM आधारित लोकेशन ट्रैकिंग</string>
+    <string name="consent_expires">जवाब देने का आखिरी समय: %1$s</string>
+    <string name="consent_question">क्या आप सहमत हैं?</string>
+    <string name="consent_yes">हाँ, मैं सहमत हूँ</string>
+    <string name="consent_no">नहीं, मैं सहमत नहीं हूँ</string>
+    <string name="consent_listen">बोलकर जवाब दें</string>
+    <string name="consent_no_request">अभी कोई अनुमति अनुरोध नहीं है</string>
+    <string name="consent_status">स्थिति</string>
+    <string name="consent_submission">भेजने की स्थिति</string>
+    <string name="consent_captured_at">आपका जवाब: %1$s (%2$s)</string>
+    <string name="consent_withdraw">अनुमति वापस लें</string>
+    <string name="consent_withdraw_title">अनुमति वापस लें?</string>
+    <string name="consent_withdraw_body">इस ट्रिप की लोकेशन ट्रैकिंग बंद करने का अनुरोध फ्रेट टाइगर को भेजा जाएगा।</string>
+    <string name="consent_withdraw_confirm">हाँ, वापस लें</string>
+    <string name="consent_history">पिछले अनुरोध</string>
+    <string name="consent_tracking_note">ट्रैकिंग तभी चालू मानी जाएगी जब फ्रेट टाइगर पुष्टि करेगा।</string>
+    <string name="method_voice">बोलकर</string>
+    <string name="method_tap">बटन से</string>
+
+    <!-- Voice -->
+    <string name="voice_title">सहायक</string>
+    <string name="voice_speaking">बोल रहा हूँ…</string>
+    <string name="voice_listening">सुन रहा हूँ… अब बोलिए</string>
+    <string name="voice_processing">समझ रहा हूँ…</string>
+    <string name="voice_tap_mic">माइक दबाकर बोलें</string>
+    <string name="voice_heard">आपने कहा: “%1$s”</string>
+    <string name="voice_no_prompt">अभी कोई सवाल नहीं है</string>
+    <string name="voice_mic_off">माइक बंद</string>
+    <string name="voice_mic_on">माइक चालू — सुन रहा है</string>
+    <string name="voice_support_option">सहायता से बात करें</string>
+    <string name="voice_defer">बाद में पूछें</string>
+    <string name="voice_result_queued">आपका जवाब दर्ज हो गया और फ्रेट टाइगर को भेजा जा रहा है</string>
+    <string name="voice_result_refused">जवाब दर्ज नहीं हो सका: %1$s</string>
+    <string name="voice_result_deferred">ठीक है, बाद में फिर पूछूँगा</string>
+    <string name="voice_result_info">सूचना सुना दी गई</string>
+    <string name="voice_tts_unavailable">आवाज़ नहीं चल सकी — सवाल स्क्रीन पर पढ़ें</string>
+    <string name="voice_answer_by_tap">बटन से जवाब दें</string>
+    <string name="voice_other_eta">कितनी देर? चुनें:</string>
+
+    <!-- Tracking screen -->
+    <string name="tracking_title">ट्रैकिंग स्थिति</string>
+    <string name="tracking_how">ट्रैकिंग की स्थिति सिर्फ़ फ्रेट टाइगर की पुष्टि के बाद बदलती है। आपके “हाँ” कहने भर से ट्रैकिंग शुरू नहीं होती।</string>
+    <string name="tracking_open_consent">अनुमति देखें / बदलें</string>
+
+    <!-- Activity -->
+    <string name="activity_title">गतिविधि इतिहास</string>
+    <string name="activity_empty">अभी कोई गतिविधि नहीं</string>
+    <string name="tab_activity">गतिविधि</string>
+    <string name="tab_received">मिले अपडेट</string>
+    <string name="tab_sent">भेजे अपडेट</string>
+    <string name="out_applied">लागू</string>
+    <string name="out_duplicate">दोहराया — अनदेखा</string>
+    <string name="out_rejected">अस्वीकार</string>
+    <string name="out_ignored">अनदेखा</string>
+
+    <!-- Settings -->
+    <string name="settings_title">सेटिंग और गोपनीयता</string>
+    <string name="settings_auto_speak">नए सवाल अपने-आप बोलें</string>
+    <string name="settings_auto_speak_desc">सिर्फ़ जब ऐप खुला हो। माइक अपने-आप चालू नहीं होगा।</string>
+    <string name="settings_pause">गैर-ज़रूरी सवाल रोकें</string>
+    <string name="settings_pause_desc">सिर्फ़ ज़रूरी सूचनाएँ (जैसे ट्रिप रद्द) आएँगी</string>
+    <string name="settings_defer">“बाद में” का समय</string>
+    <string name="settings_cooldown">एक ही सवाल दोबारा पूछने से पहले रुकें</string>
+    <string name="minutes_value">%1$d मिनट</string>
+    <string name="settings_notifications">सूचना सेटिंग खोलें</string>
+    <string name="settings_app_permissions">ऐप की अनुमतियाँ खोलें</string>
+    <string name="settings_consent">ट्रैकिंग अनुमति देखें</string>
+    <string name="settings_privacy">गोपनीयता जानकारी</string>
+    <string name="settings_language">भाषा: हिंदी</string>
+    <string name="settings_environment">सर्वर: %1$s</string>
+    <string name="settings_backend_demo">डेमो (सिम्युलेटेड)</string>
+    <string name="settings_backend_remote">फ्रेट टाइगर API (%1$s)</string>
+    <string name="settings_backend_unconfigured">कॉन्फ़िगर नहीं</string>
+    <string name="settings_logout">लॉग आउट</string>
+    <string name="settings_version">संस्करण %1$s</string>
+
+    <!-- Sync -->
+    <string name="sync_title">नेटवर्क और सिंक</string>
+    <string name="sync_online">इंटरनेट चालू</string>
+    <string name="sync_offline">इंटरनेट बंद</string>
+    <string name="sync_pending">%1$d भेजना बाकी</string>
+    <string name="sync_failed">%1$d भेजे नहीं जा सके</string>
+    <string name="sync_now">अभी भेजें</string>
+    <string name="sync_retry_failed">असफल अपडेट दोबारा भेजें</string>
+    <string name="sync_empty">अभी कोई अपडेट नहीं</string>
+    <string name="sync_attempts">कोशिशें: %1$d</string>
+    <string name="sync_next">अगली कोशिश: %1$s</string>
+    <string name="sync_error">कारण: %1$s</string>
+    <string name="sync_reference">संदर्भ: %1$s</string>
+    <string name="sync_not_configured">सर्वर कॉन्फ़िगर नहीं है — अपडेट भेजे नहीं जा सकते। अपने फ्रेट टाइगर संपर्क से बात करें।</string>
+    <string name="sync_push_status">ट्रिप सूचनाएँ (पुश): %1$s</string>
+    <string name="push_simulated">डेमो चैनल</string>
+    <string name="push_not_configured">कॉन्फ़िगर नहीं — ऐप समय-समय पर स्थिति जाँचेगा</string>
+    <string name="push_registered">चालू</string>
+    <string name="push_failed">पंजीकरण असफल</string>
+    <string name="push_pending">पंजीकरण बाकी</string>
+
+    <!-- Support -->
+    <string name="support_title">सहायता</string>
+    <string name="support_body">अगर बात समझने में दिक्कत है या कोई समस्या है, तो फ्रेट टाइगर टीम को सहायता अनुरोध भेजें।</string>
+    <string name="support_send">सहायता अनुरोध भेजें</string>
+    <string name="support_call">सहायता नंबर पर कॉल करें</string>
+    <string name="support_no_number">सहायता नंबर अभी कॉन्फ़िगर नहीं है</string>
+    <string name="support_status_queued">अनुरोध दर्ज — भेजा जा रहा है</string>
+    <string name="support_status_sent">फ्रेट टाइगर को अनुरोध मिल गया</string>
+    <string name="support_callback_confirmed">कॉलबैक तय हो गया है</string>
+    <string name="support_callback_not_confirmed">कॉलबैक अभी तय नहीं हुआ है</string>
+    <string name="support_failed">अनुरोध भेजा नहीं जा सका</string>
+    <string name="support_recent">आपके अनुरोध</string>
+
+    <!-- Demo -->
+    <string name="demo_title">डेमो पैनल (सिम्युलेशन)</string>
+    <string name="demo_disclaimer">यहाँ बनाए गए सभी इवेंट नकली हैं और सिर्फ़ इस फ़ोन के अंदर चलते हैं। ये असली फ्रेट टाइगर अपडेट नहीं हैं।</string>
+    <string name="demo_section_events">बैकएंड इवेंट सिम्युलेट करें</string>
+    <string name="demo_assign">1. ट्रिप सौंपें (ब्रीफ़िंग सुनें)</string>
+    <string name="demo_consent">3. ट्रैकिंग अनुमति माँगें</string>
+    <string name="demo_open_voice">2 / 4. सहायक खोलें और जवाब दें</string>
+    <string name="demo_activation_ok">6a. पुष्टि: ट्रैकिंग चालू</string>
+    <string name="demo_activation_fail">6b. पुष्टि असफल</string>
+    <string name="demo_eta">7. ETA पूछें</string>
+    <string name="demo_arrival">8. पहुँचने की पुष्टि पूछें</string>
+    <string name="demo_loading">लोडिंग स्थिति पूछें</string>
+    <string name="demo_cancel">ट्रिप रद्द करें</string>
+    <string name="demo_complete">ट्रिप पूरा करें</string>
+    <string name="demo_duplicate">पिछला इवेंट दोबारा भेजें (डुप्लिकेट)</string>
+    <string name="demo_section_network">9. नेटवर्क सिम्युलेशन</string>
+    <string name="demo_device_offline">फ़ोन ऑफ़लाइन</string>
+    <string name="demo_server_down">सर्वर उपलब्ध नहीं</string>
+    <string name="demo_fail_next">अगले 3 अनुरोध 503 से असफल करें</string>
+    <string name="demo_validation_mode">अनुमति पुष्टि मोड</string>
+    <string name="mode_manual">हाथ से (6a/6b)</string>
+    <string name="mode_auto_ok">अपने-आप स्वीकार</string>
+    <string name="mode_auto_fail">अपने-आप अस्वीकार</string>
+    <string name="demo_submissions">10. सिम्युलेटेड सर्वर को मिले अनुरोध</string>
+    <string name="demo_no_trip">पहले ट्रिप सौंपें</string>
+    <string name="demo_no_pending_consent">पुष्टि के लिए कोई “हाँ” जवाब नहीं मिला</string>
+    <string name="demo_event_history">इवेंट इतिहास खोलें</string>
+    <string name="demo_sync_now">अभी सिंक करें</string>
+    <string name="demo_result">नतीजा: %1$s</string>
+
+    <!-- Notifications -->
+    <string name="channel_prompts_name">ट्रिप सवाल</string>
+    <string name="channel_prompts_desc">फ्रेट टाइगर ट्रिप से जुड़े सवाल और ज़रूरी सूचनाएँ</string>
+    <string name="notif_answer_now">अभी जवाब दें</string>
+    <string name="notif_later">बाद में</string>
+    <string name="notif_body_question">सुरक्षित रुककर जवाब दें, या “बाद में” चुनें।</string>
+    <string name="notif_body_info">विवरण देखने के लिए खोलें।</string>
+    <string name="notif_simulated_prefix">[डेमो] %1$s</string>
+
+    <!-- Reason codes -->
+    <string name="err_request_expired">अनुरोध की समय सीमा खत्म हो गई</string>
+    <string name="err_trip_not_active">ट्रिप चालू नहीं है</string>
+    <string name="err_invalid_loading_transition">यह स्थिति अभी नहीं दी जा सकती</string>
+    <string name="err_already_at_loading_point">आप पहले ही लोडिंग पॉइंट पहुँच चुके हैं</string>
+    <string name="err_arrival_already_reported">पहुँचने की जानकारी पहले ही दी जा चुकी है</string>
+    <string name="err_not_configured">सर्वर कॉन्फ़िगर नहीं है</string>
+    <string name="err_network">इंटरनेट या सर्वर से संपर्क नहीं हो सका</string>
+    <string name="err_invalid_otp">OTP गलत है</string>
+    <string name="err_invalid_phone">सही 10 अंकों का मोबाइल नंबर डालें</string>
+    <string name="err_otp_expired">OTP की समय सीमा खत्म। नया OTP मँगाएँ।</string>
+    <string name="err_invalid_otp_format">6 अंकों का OTP डालें</string>
+    <string name="err_status_unchanged">यही स्थिति पहले से दर्ज है</string>
+    <string name="err_no_session">कृपया दोबारा लॉग इन करें</string>
+    <string name="err_other">कारण कोड: %1$s</string>
+</resources>

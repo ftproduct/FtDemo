@@ -72,6 +72,7 @@ class FakeBackend : AssistantBackend {
     override suspend fun fetchActiveTrip(driverId: String): BackendResult<Trip?> = BackendResult.Success(null)
     override suspend fun fetchTripState(tripId: String): BackendResult<TripStateSnapshot> =
         BackendResult.Failure(BackendError.NotFound())
+    override suspend fun registerPushToken(driverId: String, token: String): BackendResult<Unit> = BackendResult.Success(Unit)
 }
 
 class TestHarness(online: Boolean = true) {

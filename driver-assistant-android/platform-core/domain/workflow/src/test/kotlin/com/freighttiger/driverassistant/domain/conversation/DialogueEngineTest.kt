@@ -130,6 +130,16 @@ class DialogueEngineTest {
     }
 
     @Test
+    fun `free-form commands are interpreted but never as consent`() {
+        assertEquals(DialogueOutcome.Arrival(true, null, CaptureMethod.VOICE), engine.interpretCommand(Utterance("main pahunch gaya")))
+        assertEquals(DialogueOutcome.Eta(60, false, CaptureMethod.VOICE), engine.interpretCommand(Utterance("ek ghanta lagega")))
+        assertEquals(DialogueOutcome.Loading(LoadingStatus.LOADING_STARTED, CaptureMethod.VOICE), engine.interpretCommand(Utterance("loading shuru ho gayi")))
+        assertEquals(DialogueOutcome.SupportRequested, engine.interpretCommand(Utterance("mujhe support se baat karni hai")))
+        assertEquals(null, engine.interpretCommand(Utterance("haan main sahmat hoon")))
+        assertEquals(null, engine.interpretCommand(Utterance("haan")))
+    }
+
+    @Test
     fun `informational prompts complete immediately`() {
         val step = engine.start(prompt(PromptType.TRIP_CANCELLED), null) as DialogueStep.Complete
         assertEquals(DialogueOutcome.Acknowledged, step.outcome)

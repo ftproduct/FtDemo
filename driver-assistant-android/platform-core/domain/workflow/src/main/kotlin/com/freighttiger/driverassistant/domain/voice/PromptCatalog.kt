@@ -38,6 +38,8 @@ interface PromptCatalog {
     fun tripCancelled(): String
     fun tripCompleted(): String
     fun testPrompt(): String
+    fun commandHelp(): String
+    fun commandNotUnderstood(): String
     fun formatDuration(minutes: Int): String
 }
 
@@ -126,6 +128,12 @@ class HindiPromptCatalog : PromptCatalog {
     override fun tripCompleted() = "ट्रिप पूरा हो गया है। धन्यवाद।"
 
     override fun testPrompt() = "नमस्ते! मैं फ्रेट टाइगर ड्राइवर असिस्टेंट हूँ। क्या आप मेरी आवाज़ साफ़ सुन पा रहे हैं?"
+
+    override fun commandHelp() =
+        "बोलिए — जैसे “मैं पहुँच गया”, “एक घंटा लगेगा”, “लोडिंग शुरू हो गई”, या “सहायता चाहिए”।"
+
+    override fun commandNotUnderstood() =
+        "माफ़ कीजिए, समझ नहीं आया। आप स्क्रीन पर बटन से भी अपडेट दे सकते हैं।"
 
     override fun formatDuration(minutes: Int): String {
         val h = minutes / 60

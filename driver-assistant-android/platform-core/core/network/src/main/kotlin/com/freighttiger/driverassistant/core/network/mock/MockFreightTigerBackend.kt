@@ -210,6 +210,9 @@ class MockFreightTigerBackend(
         )
     }
 
+    /** Demo mode uses the in-process event channel; no token is needed. */
+    override suspend fun registerPushToken(driverId: String, token: String): BackendResult<Unit> = BackendResult.Success(Unit)
+
     // ------------------------------------------------------------------ AuthGateway (demo OTP)
 
     override suspend fun requestOtp(phoneNumber: String): BackendResult<OtpChallenge> {

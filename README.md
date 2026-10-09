@@ -65,3 +65,9 @@ All UI components use the `ft-design-system` npm package. Custom components shou
 - ESLint configured
 - All API calls typed with Zod schemas
 - Production-ready code standards
+
+## Freight Tiger Driver Assistant (Android)
+
+A separate, Hindi-first voice assistant app for truck drivers lives in
+[`driver-assistant-android/`](driver-assistant-android/README.md). It is an independent Gradle project
+(Kotlin, Jetpack Compose) and does not affect this web app's build.

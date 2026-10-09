@@ -81,6 +81,9 @@ interface AssistantBackend {
     suspend fun submit(event: OutboundEvent): BackendResult<SubmissionAck>
     suspend fun fetchActiveTrip(driverId: String): BackendResult<Trip?>
     suspend fun fetchTripState(tripId: String): BackendResult<TripStateSnapshot>
+
+    /** Registers this device's push token so the backend can deliver trip events. */
+    suspend fun registerPushToken(driverId: String, token: String): BackendResult<Unit>
 }
 
 data class OtpChallenge(val challengeId: String, val expiresAt: Instant, val simulated: Boolean, val demoHint: String? = null)

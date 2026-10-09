@@ -117,6 +117,36 @@ class DialogueEngine(
         }
     }
 
+    /**
+     * Interprets a free-form driver command when no question is pending ("main pahunch gaya",
+     * "ek ghanta lagega", "loading shuru", "support"). Uses the GENERAL context, so it can never
+     * produce a consent decision. Returns null when not understood.
+     */
+    fun interpretCommand(utterance: com.freighttiger.driverassistant.core.model.Utterance): DialogueOutcome? {
+        val r = classifier.classify(utterance, QuestionContext.GENERAL)
+        if (r.intent == AssistantIntent.REQUEST_HUMAN_SUPPORT) return DialogueOutcome.SupportRequested
+        if (r.confidence < policy.otherMinConfidence) return null
+        val eta = r.etaMinutes
+        val loading = r.loadingStatus
+        return when (r.intent) {
+            AssistantIntent.ARRIVAL_YES -> DialogueOutcome.Arrival(true, null, CaptureMethod.VOICE)
+            AssistantIntent.ETA_REPORTED -> eta?.let { DialogueOutcome.Eta(it, r.etaApproximate, CaptureMethod.VOICE) }
+            AssistantIntent.LOADING_STATUS_REPORTED -> loading?.let { DialogueOutcome.Loading(it, CaptureMethod.VOICE) }
+            else -> null
+        }
+    }
+
+    /** Spoken confirmation for an outcome captured outside a question (commands, taps). */
+    fun confirmationFor(outcome: DialogueOutcome): String = when (outcome) {
+        is DialogueOutcome.Consent ->
+            if (outcome.decision == ConsentDecision.GRANTED) catalog.consentCapturedYes() else catalog.consentCapturedNo()
+        is DialogueOutcome.Eta -> catalog.etaCaptured(outcome.minutes, outcome.approximate)
+        is DialogueOutcome.Arrival -> if (outcome.arrived) catalog.arrivalCapturedYes() else catalog.arrivalCapturedNo(outcome.etaMinutes)
+        is DialogueOutcome.Loading -> catalog.loadingCaptured(outcome.status)
+        DialogueOutcome.SupportRequested -> catalog.supportRequestQueued()
+        DialogueOutcome.Acknowledged -> ""
+    }
+
     fun onRecognition(session: DialogueSession, result: RecognitionResult): DialogueStep = when (result) {
         is RecognitionResult.Error -> onSpeechError(session, result.kind)
         is RecognitionResult.Recognized -> onUtterance(session, result)

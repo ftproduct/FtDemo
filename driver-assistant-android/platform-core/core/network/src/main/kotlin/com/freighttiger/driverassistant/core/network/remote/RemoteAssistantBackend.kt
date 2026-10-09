@@ -8,6 +8,7 @@ import com.freighttiger.driverassistant.core.network.dto.ContractViolation
 import com.freighttiger.driverassistant.core.network.dto.OtpRequest
 import com.freighttiger.driverassistant.core.network.dto.OtpVerifyRequest
 import com.freighttiger.driverassistant.core.network.dto.OutboundMapper
+import com.freighttiger.driverassistant.core.network.dto.PushTokenRequest
 import com.freighttiger.driverassistant.core.network.dto.instant
 import com.freighttiger.driverassistant.core.network.dto.toDomain
 import com.freighttiger.driverassistant.domain.backend.AssistantBackend
@@ -52,7 +53,14 @@ class RemoteAssistantBackend(
 
     override suspend fun fetchTripState(tripId: String): BackendResult<TripStateSnapshot> =
         apiCall(json, { api.getTripState(tripId) }) { it.toDomain() }
+
+    override suspend fun registerPushToken(driverId: String, token: String): BackendResult<Unit> =
+        apiCall(json, { api.putPushToken(PushTokenRequest(driverId, token, appVersion = config.clientVersion)).asUnitResponse() }) { }
 }
+
+/** 204 responses have no body; treat any 2xx as success for endpoints returning nothing. */
+private fun retrofit2.Response<Unit>.asUnitResponse(): retrofit2.Response<Unit> =
+    if (isSuccessful) retrofit2.Response.success(Unit, raw()) else this
 
 /** HTTP implementation of the proposed OTP endpoints. */
 class RemoteAuthGateway(private val api: FreightTigerAssistantApi) : AuthGateway {
@@ -80,6 +88,7 @@ class UnconfiguredBackend : AssistantBackend, AuthGateway {
     override suspend fun submit(event: OutboundEvent) = failure
     override suspend fun fetchActiveTrip(driverId: String) = failure
     override suspend fun fetchTripState(tripId: String) = failure
+    override suspend fun registerPushToken(driverId: String, token: String) = failure
     override suspend fun requestOtp(phoneNumber: String) = failure
     override suspend fun verifyOtp(challengeId: String, phoneNumber: String, otp: String) = failure
 }

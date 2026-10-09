@@ -68,17 +68,7 @@ class TripCoordinator(
                 val requestId = prompt.consentRequestId ?: return CoordinatorResult.Refused("MISSING_CONSENT_REQUEST")
                 submitConsentDecision(requestId, outcome.decision, outcome.method, outcome.transcript)
             }
-            is DialogueOutcome.Eta -> reportEta(prompt.tripId, outcome.minutes, outcome.approximate, outcome.method)
-            is DialogueOutcome.Arrival -> {
-                val r = confirmArrival(prompt.tripId, outcome.arrived, outcome.method)
-                if (!outcome.arrived && outcome.etaMinutes != null && r is CoordinatorResult.Queued) {
-                    reportEta(prompt.tripId, outcome.etaMinutes, approximate = true, method = outcome.method)
-                }
-                r
-            }
-            is DialogueOutcome.Loading -> reportLoadingStatus(prompt.tripId, outcome.status, outcome.method)
-            DialogueOutcome.SupportRequested -> requestSupport(prompt.tripId, SupportReason.DRIVER_REQUESTED)
-            DialogueOutcome.Acknowledged -> CoordinatorResult.NothingToSend
+            else -> applyCommand(prompt.tripId, outcome)
         }
         // A support request leaves the original question open for later.
         if (outcome is DialogueOutcome.SupportRequested) {
@@ -87,6 +77,33 @@ class TripCoordinator(
             scheduler.complete(prompt.promptId)
         }
         return result
+    }
+
+    /**
+     * Applies an outcome that is not tied to a specific question (free-form voice command or tap).
+     * Consent can never be given this way: it always needs an explicit consent question.
+     */
+    suspend fun applyCommand(tripId: String?, outcome: DialogueOutcome): CoordinatorResult = when (outcome) {
+        is DialogueOutcome.Consent -> CoordinatorResult.Refused("CONSENT_REQUIRES_QUESTION")
+        DialogueOutcome.SupportRequested -> requestSupport(tripId, SupportReason.DRIVER_REQUESTED)
+        DialogueOutcome.Acknowledged -> CoordinatorResult.NothingToSend
+        else -> if (tripId == null) {
+            CoordinatorResult.Refused("NO_ACTIVE_TRIP")
+        } else {
+            when (outcome) {
+                is DialogueOutcome.Eta -> reportEta(tripId, outcome.minutes, outcome.approximate, outcome.method)
+                is DialogueOutcome.Arrival -> {
+                    val r = confirmArrival(tripId, outcome.arrived, outcome.method)
+                    val eta = outcome.etaMinutes
+                    if (!outcome.arrived && eta != null && r is CoordinatorResult.Queued) {
+                        reportEta(tripId, eta, approximate = true, method = outcome.method)
+                    }
+                    r
+                }
+                is DialogueOutcome.Loading -> reportLoadingStatus(tripId, outcome.status, outcome.method)
+                else -> CoordinatorResult.NothingToSend
+            }
+        }
     }
 
     suspend fun submitConsentDecision(
