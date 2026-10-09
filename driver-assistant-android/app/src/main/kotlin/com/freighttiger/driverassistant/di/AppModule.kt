@@ -56,6 +56,7 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -69,7 +70,11 @@ object AppModule {
     fun appConfig(): AppConfig = AppConfig.fromBuildConfig()
 
     @Provides @Singleton @ApplicationScope
-    fun applicationScope(): CoroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
+    fun applicationScope(): CoroutineScope = CoroutineScope(
+        SupervisorJob() + Dispatchers.Default +
+            // A failure in one background task (e.g. a corrupt row) must not kill the app.
+            CoroutineExceptionHandler { _, e -> Log.e("FtdaScope", "Unhandled background failure", e) },
+    )
 
     @Provides @Singleton
     fun timeSource(): TimeSource = TimeSource.System

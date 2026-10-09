@@ -29,7 +29,7 @@ ksp {
 
 dependencies {
     api("com.freighttiger.driverassistant:domain-workflow:0.1.0")
-    implementation(libs.androidx.room.runtime)
+    api(libs.androidx.room.runtime) // AssistantDatabase (a RoomDatabase) is exposed to :app
     implementation(libs.androidx.room.ktx)
     ksp(libs.androidx.room.compiler)
     implementation(libs.kotlinx.serialization.json)

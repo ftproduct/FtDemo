@@ -14,6 +14,7 @@ import androidx.compose.ui.test.performScrollTo
 import androidx.test.core.app.ActivityScenario
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.rule.GrantPermissionRule
+import androidx.hilt.work.HiltWorkerFactory
 import androidx.work.Configuration
 import androidx.work.testing.SynchronousExecutor
 import androidx.work.testing.WorkManagerTestInitHelper
@@ -42,6 +43,7 @@ abstract class BaseUiTest {
     @get:Rule(order = 1) val compose = createEmptyComposeRule()
     @get:Rule(order = 2) val permissions: GrantPermissionRule = GrantPermissionRule.grant(Manifest.permission.RECORD_AUDIO)
 
+    @Inject lateinit var workerFactory: HiltWorkerFactory
     @Inject lateinit var selection: BackendSelection
     @Inject lateinit var runtime: AssistantRuntime
     @Inject lateinit var settings: SettingsRepository
@@ -59,11 +61,11 @@ abstract class BaseUiTest {
         context.deleteDatabase(AssistantDatabase.NAME)
         context.getSharedPreferences("ftda_settings", Context.MODE_PRIVATE).edit().clear().commit()
         context.getSharedPreferences("ftda_secure_session", Context.MODE_PRIVATE).edit().clear().commit()
+        hilt.inject()
         WorkManagerTestInitHelper.initializeTestWorkManager(
             context,
-            Configuration.Builder().setExecutor(SynchronousExecutor()).build(),
+            Configuration.Builder().setExecutor(SynchronousExecutor()).setWorkerFactory(workerFactory).build(),
         )
-        hilt.inject()
         notifier.createChannels()
         runtime.start()
     }

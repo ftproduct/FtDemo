@@ -20,7 +20,6 @@ import com.freighttiger.driverassistant.platform.sync.SyncScheduler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -52,12 +51,18 @@ class AssistantRuntime @Inject constructor(
         started = true
 
         // Demo mode: the simulated backend's event channel stands in for FCM.
-        selection.mock?.let { mock -> scope.launch { mock.pushEvents.collect { handleInbound(it) } } }
+        selection.mock?.let { mock ->
+            scope.launch {
+                mock.pushEvents.collect { event ->
+                    runCatching { handleInbound(event) }.onFailure { Log.e(TAG, "Inbound handling failed", it) }
+                }
+            }
+        }
 
         scope.launch { settings.settings.collect { scheduler.policy = it.toPromptPolicy() } }
 
         scope.launch {
-            connectivity.isOnline.distinctUntilChanged().filter { it }.collect { sync.requestSync() }
+            connectivity.isOnline.filter { it }.collect { sync.requestSync() }
         }
 
         // While visible, reconcile with the authoritative trip state (covers missing/late pushes).

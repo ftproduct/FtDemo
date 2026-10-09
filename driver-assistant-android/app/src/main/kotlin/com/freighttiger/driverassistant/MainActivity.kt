@@ -6,6 +6,9 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.lifecycle.lifecycleScope
+import com.freighttiger.driverassistant.domain.ports.PromptRepository
+import kotlinx.coroutines.launch
 import com.freighttiger.driverassistant.runtime.PromptPresenter
 import com.freighttiger.driverassistant.ui.navigation.DriverAssistantNavHost
 import com.freighttiger.driverassistant.ui.navigation.PromptOpen
@@ -18,6 +21,7 @@ import javax.inject.Inject
 class MainActivity : ComponentActivity() {
 
     @Inject lateinit var presenter: PromptPresenter
+    @Inject lateinit var prompts: PromptRepository
 
     private val intentPrompt = MutableStateFlow<PromptOpen?>(null)
 
@@ -31,6 +35,7 @@ class MainActivity : ComponentActivity() {
                     openRequests = presenter.openRequests,
                     intentPrompt = intentPrompt,
                     onIntentConsumed = { intentPrompt.value = null },
+                    onOpenRejected = { id -> lifecycleScope.launch { presenter.fallbackToNotification(id, prompts.get(id)) } },
                 )
             }
         }

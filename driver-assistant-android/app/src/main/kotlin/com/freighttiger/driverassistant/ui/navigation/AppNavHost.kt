@@ -54,7 +54,10 @@ data class PromptOpen(val promptId: String, val userInitiated: Boolean)
 class Nav(private val controller: NavHostController) {
     fun back() { controller.popBackStack() }
     fun to(route: String) = controller.navigate(route) { launchSingleTop = true }
-    fun voice(promptId: String?, userInitiated: Boolean) = to(Routes.voice(promptId, userInitiated))
+    /** Always a fresh voice entry: a reused single-top entry would keep the previous prompt. */
+    fun voice(promptId: String?, userInitiated: Boolean) = controller.navigate(Routes.voice(promptId, userInitiated)) {
+        popUpTo(Routes.VOICE) { inclusive = true }
+    }
     fun home() = controller.navigate(Routes.HOME) {
         popUpTo(controller.graph.id) { inclusive = true }
         launchSingleTop = true
@@ -69,6 +72,7 @@ fun DriverAssistantNavHost(
     openRequests: SharedFlow<String>,
     intentPrompt: StateFlow<PromptOpen?>,
     onIntentConsumed: () -> Unit,
+    onOpenRejected: (String) -> Unit = {},
 ) {
     val statusVm: AppStatusViewModel = hiltViewModel()
     val status by statusVm.status.collectAsStateWithLifecycle()
@@ -104,7 +108,7 @@ fun DriverAssistantNavHost(
 
     // Foreground prompt presentation requested by the runtime.
     LaunchedEffect(openRequests) {
-        openRequests.collect { promptId -> if (onboarded) nav.voice(promptId, userInitiated = false) }
+        openRequests.collect { promptId -> if (onboarded) nav.voice(promptId, userInitiated = false) else onOpenRejected(promptId) }
     }
 
     // Prompt opened from a notification.

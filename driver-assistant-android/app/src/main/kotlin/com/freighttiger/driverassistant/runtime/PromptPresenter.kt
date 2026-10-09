@@ -39,7 +39,8 @@ class PromptPresenter @Inject constructor(
 
     suspend fun present(prompt: AssistantPrompt) = mutex.withLock {
         presented += prompt.promptId
-        if (audioPolicy.canAutoPresent() && !conversationActive) {
+        // Only open in-app when the UI is actually collecting; otherwise the request would be dropped.
+        if (audioPolicy.canAutoPresent() && !conversationActive && _openRequests.subscriptionCount.value > 0) {
             _openRequests.emit(prompt.promptId)
         } else {
             notifier.show(prompt)
@@ -59,4 +60,9 @@ class PromptPresenter @Inject constructor(
     }
 
     fun dismissNotification(promptId: String) = notifier.cancel(promptId)
+
+    /** UI could not open the prompt (e.g. onboarding not finished): fall back to a notification. */
+    fun fallbackToNotification(promptId: String, prompt: AssistantPrompt?) {
+        if (prompt != null) notifier.show(prompt)
+    }
 }
