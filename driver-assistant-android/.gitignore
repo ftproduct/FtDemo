@@ -1,0 +1,14 @@
+.gradle/
+build/
+**/build/
+local.properties
+*.iml
+.idea/
+.kotlin/
+captures/
+.externalNativeBuild/
+.cxx/
+# Firebase config is environment-specific and must not be committed.
+app/google-services.json
+*.keystore
+*.jks
