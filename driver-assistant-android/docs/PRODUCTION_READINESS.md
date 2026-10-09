@@ -28,7 +28,7 @@
 
 | Area | Gap | Suggested next step |
 |---|---|---|
-| Build verification | This MVP was developed where Google Maven / the Android SDK were blocked, so the Android modules were syntax-checked and reviewed but **not compiled locally**. CI (`.github/workflows/driver-assistant-android.yml`) compiles them and runs the instrumented tests. | Keep CI green and run a manual QA pass on real devices |
+| Build verification | The development container could not reach Google Maven or the Android SDK, so Android code was verified in CI (`.github/workflows/driver-assistant-android.yml`). It assembles the APK, runs lint, and runs the Room and Compose UI tests on an API 34 emulator. The run is green. | Keep CI required; do a manual QA pass on low-end devices with real Hindi speech |
 | Speech quality | Recognition quality depends on the device's hi-IN recogniser and installed Hindi TTS voice. Rules cover common answers, not every dialect or code-mix. | Field-test with drivers, collect anonymised failure phrases (with consent), extend the lexicon, or plug in an AI `IntentClassifier` behind the same contract |
 | On-device ASR | `SpeechRecognizer` may process audio off-device | Decide on a privacy policy. Prefer on-device recognition where available |
 | Database migrations | Schema v1 uses destructive fallback | Add Room migrations before the first schema change |
